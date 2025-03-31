@@ -2,6 +2,57 @@
 
 ## Introduction
 
+AUTOLOSS
+===================
+
+Project structure:
+
+├── data_utils.py
+    - Functions for data generation and splitting:
+      generate_full_data(), split_train_val(), generate_test_data()
+
+├── model_utils.py
+    - Core model logic for building & solving the inner QP problem:
+      build_qp_matrices(), solve_inner_qpth()
+
+├── training.py
+    - Outer-level training routines and hyperparameter optimization:
+      compute_outer_loss(), train_hyperparams()
+
+├── evaluation.py
+    - Utilities for performance evaluation, printing metrics, and OLS comparison:
+      evaluate_and_print(), train_ols(), compute_test_Xbeta()
+
+├── theoretical_loss.py
+    - Definitions related to the theoretical Autoloss function and its plotting:
+      reHU_piecewise(), single_autoloss(), plot_theoretical_autoloss()
+
+├── main.py
+    - The primary entry point script.
+    - Uses argparse to parse command-line arguments.
+    - Calls data generation, training, evaluation, etc. from the above modules.
+    - Saves final results to 'autoloss_result.pkl'.
+
+└── readme.txt
+    - This file. Contains an overview of the project structure and usage.
+
+Usage
+-----
+1) Install dependencies. For example:
+   pip install torch qpth matplotlib tqdm
+
+2) Run the main script:
+   python main.py --help
+
+   e.g.:
+   python main.py --total_sample_size 300 --feature_dimension 10 --optimizer_choice adamw --visualize --verbose
+
+3) Output files:
+   - autoloss_result.pkl: Contains the final hyperparameters (U, V, S, T, beta_opt, etc.)
+
+You can further expand or modify each module based on specific project requirements.
+
+
 ## Update History
 
 ### Version 1.2.1  (2025/03/24)
