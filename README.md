@@ -2,9 +2,6 @@
 
 ## Introduction
 
-AUTOLOSS
-===================
-
 Project structure:
 
 ├── data_utils.py
