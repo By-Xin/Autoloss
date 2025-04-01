@@ -13,6 +13,7 @@ from model_utils import solve_inner_qpth
 from training import train_hyperparams
 from evaluation import evaluate_and_print, train_ols, compute_test_Xbeta
 from theoretical_loss import plot_theoretical_autoloss
+from save_utils import save_experiment_results
 
 def main():
     parser = argparse.ArgumentParser(description="Run AutoLoss QP Training")
@@ -66,7 +67,7 @@ def main():
     all_val_losses = []
     for it in range(args.num_global_updates):
         if args.verbose:
-            print(f"Global iteration {it+1}/{args.num_global_updates} ...")
+            print(f"\nGlobal iteration {it+1}/{args.num_global_updates} ...")
 
         U, V, S, T, val_loss_hist = train_hyperparams(
             X_train, y_train,
@@ -105,7 +106,7 @@ def main():
 
     # 评估
     if args.verbose:
-        print("[*] Final Beta:", beta_opt.detach().cpu().numpy())
+        print("\n> Final Beta:", beta_opt.detach().cpu().numpy())
         evaluate_and_print(X_train, y_train, beta_opt, beta_true, label="[Train]")
         evaluate_and_print(X_val,   y_val,   beta_opt, beta_true, label="[Val]")
 
@@ -122,59 +123,11 @@ def main():
         plt.legend()
         plt.show()
 
-    # 保存结果
-    results_pkl_dir = os.path.join(os.path.dirname(__file__), 'results_pkl')
-    results_txt_dir = os.path.join(os.path.dirname(__file__), 'results_txt')
-    os.makedirs(results_pkl_dir, exist_ok=True)
-    os.makedirs(results_txt_dir, exist_ok=True)
-
-    timestamp = datetime.now().strftime('%m%d%H%M') 
-    base_filename = (
-        f'D{args.distribution[0]}' 
-        f'M{args.loss_type}'
-        f'_L{args.L}'
-        f'H{args.H}'
-        f'N{args.total_sample_size}'
-        f'F{args.feature_dimension}'
-        f'T{args.num_training_samples}'
-        f'G{args.num_global_updates}'
-        f'H{args.num_hyperparam_iterations}'
-        f'_{timestamp}'
+    pkl_path, txt_path = save_experiment_results(
+        autoloss_result, args, beta_opt, 
+        U, V, S, T, tau, beta_true, 
+        all_val_losses, X_train, y_train, X_val, y_val
     )
-    
-    pkl_path = os.path.join(results_pkl_dir, f'{base_filename}.pkl')
-    with open(pkl_path, 'wb') as f:
-        pickle.dump(autoloss_result, f)
-    
-    # 保存 txt 文件
-    txt_path = os.path.join(results_txt_dir, f'{base_filename}.txt')
-    with open(txt_path, 'w') as f:
-        f.write(f"AutoLoss Experiment Results\n")
-        f.write(f"================{timestamp}================\n")
-        f.write(f"Timestamp: {timestamp}\n\n")
-        f.write(f"Configuration:\n")
-        f.write(f"- Distribution: {args.distribution}\n")
-        f.write(f"- Loss Type: {args.loss_type}\n")
-        f.write(f"- Optimizer: {args.optimizer_choice}\n")
-        f.write(f"- Parameters: L={args.L}, H={args.H}\n")
-        f.write(f"- Samples: {args.total_sample_size} (train={args.num_training_samples})\n")
-        f.write(f"- Features: {args.feature_dimension}\n")
-        f.write(f"- Updates: {args.num_global_updates} global, {args.num_hyperparam_iterations} hyper\n\n")
-        
-        f.write(f"Results:\n")
-        f.write(f"- Final Beta: {beta_opt.detach().cpu().numpy()}\n")
-        f.write(f"- U: {U.detach().cpu().numpy()}\n")
-        f.write(f"- V: {V.detach().cpu().numpy()}\n")
-        f.write(f"- S: {S.detach().cpu().numpy()}\n")
-        f.write(f"- T: {T.detach().cpu().numpy()}\n")
-        f.write(f"- tau: {tau.cpu().numpy()}\n")
-        
-    print(f"[*] Result saved to results")
-
-    # 后续如有测试/可视化理论 AutoLoss，也可在此调用
-    # 例如:
-    # from theoretical_loss import plot_theoretical_autoloss
-    # plot_theoretical_autoloss(autoloss_result, r_min=-10, r_max=10)
 
 if __name__ == "__main__":
     main()
