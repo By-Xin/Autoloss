@@ -4,6 +4,8 @@ import argparse
 import pickle
 import torch
 import matplotlib.pyplot as plt
+from datetime import datetime
+import os
 
 # 导入各模块
 from data_utils import generate_full_data, split_train_val, generate_test_data
@@ -121,9 +123,53 @@ def main():
         plt.show()
 
     # 保存结果
-    with open('autoloss_result.pkl', 'wb') as f:
+    results_pkl_dir = os.path.join(os.path.dirname(__file__), 'results_pkl')
+    results_txt_dir = os.path.join(os.path.dirname(__file__), 'results_txt')
+    os.makedirs(results_pkl_dir, exist_ok=True)
+    os.makedirs(results_txt_dir, exist_ok=True)
+
+    timestamp = datetime.now().strftime('%m%d%H%M') 
+    base_filename = (
+        f'D{args.distribution[0]}' 
+        f'M{args.loss_type}'
+        f'_L{args.L}'
+        f'H{args.H}'
+        f'N{args.total_sample_size}'
+        f'F{args.feature_dimension}'
+        f'T{args.num_training_samples}'
+        f'G{args.num_global_updates}'
+        f'H{args.num_hyperparam_iterations}'
+        f'_{timestamp}'
+    )
+    
+    pkl_path = os.path.join(results_pkl_dir, f'{base_filename}.pkl')
+    with open(pkl_path, 'wb') as f:
         pickle.dump(autoloss_result, f)
-    print("[*] autoloss_result saved to autoloss_result.pkl")
+    
+    # 保存 txt 文件
+    txt_path = os.path.join(results_txt_dir, f'{base_filename}.txt')
+    with open(txt_path, 'w') as f:
+        f.write(f"AutoLoss Experiment Results\n")
+        f.write(f"================{timestamp}================\n")
+        f.write(f"Timestamp: {timestamp}\n\n")
+        f.write(f"Configuration:\n")
+        f.write(f"- Distribution: {args.distribution}\n")
+        f.write(f"- Loss Type: {args.loss_type}\n")
+        f.write(f"- Optimizer: {args.optimizer_choice}\n")
+        f.write(f"- Parameters: L={args.L}, H={args.H}\n")
+        f.write(f"- Samples: {args.total_sample_size} (train={args.num_training_samples})\n")
+        f.write(f"- Features: {args.feature_dimension}\n")
+        f.write(f"- Updates: {args.num_global_updates} global, {args.num_hyperparam_iterations} hyper\n\n")
+        
+        f.write(f"Results:\n")
+        f.write(f"- Final Beta: {beta_opt.detach().cpu().numpy()}\n")
+        f.write(f"- U: {U.detach().cpu().numpy()}\n")
+        f.write(f"- V: {V.detach().cpu().numpy()}\n")
+        f.write(f"- S: {S.detach().cpu().numpy()}\n")
+        f.write(f"- T: {T.detach().cpu().numpy()}\n")
+        f.write(f"- tau: {tau.cpu().numpy()}\n")
+        
+    print(f"[*] Result saved to results")
 
     # 后续如有测试/可视化理论 AutoLoss，也可在此调用
     # 例如:
