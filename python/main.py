@@ -177,6 +177,32 @@ def main():
             
             # 保存到字典
             val_metrics_dict[name] = {'mse': mse, 'mae': mae}
+
+        # 7. Evaluate predictions on test data
+        print("\n----- Test Data Evaluation -----")
+        print(f"{'Method':<12} {'MSE':<12} {'MAE':<12}")
+        print("-" * 36)
+        # 生成测试数据
+        X_test, y_test= generate_test_data(
+            num_test_sample=500,
+            feature_dimension=args.feature_dimension,
+            beta_true=beta_true,
+            distribution=args.distribution,
+            scale=args.scale,
+            seed=args.seed + 1000,
+            device=device
+        )
+        for name, beta in [
+            ("AutoLoss", beta_autoloss),
+            ("L2 Reg", beta_reg_l2),
+            ("L1 Reg", beta_reg_l1)
+        ]:
+            # 计算并打印验证集评估指标
+            mse, mae = calc_pred_metrics(X_test, y_test, beta)
+            print(f"{name:<12} {mse:<12.6f} {mae:<12.6f}")
+            
+            # 保存到字典
+            val_metrics_dict[name] = {'mse': mse, 'mae': mae}
         print("\n")
     else:
         # 如果不是verbose模式，创建空字典
@@ -195,8 +221,8 @@ def main():
         plt.title(f"Val Loss Curve ({args.distribution}, {args.loss_type}, Optim={args.optimizer_choice})")
         plt.grid(True)
         plt.legend()
-        plt.show()
-
+        #plt.show()
+        plot_theoretical_autoloss(autoloss_result, r_min=-10, r_max=10, num_points=200)
     pkl_path, txt_path = save_experiment_results(
         autoloss_result, args, beta_autoloss, 
         U, V, S, T, tau, beta_true, 

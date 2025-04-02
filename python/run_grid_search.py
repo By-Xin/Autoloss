@@ -3,16 +3,16 @@ import itertools
 import subprocess
 import torch
 
-distributions = ["laplace", "normal"]
-loss_types = ["mse", "mae"]
-L_values = [0, 1]
-H_values = [2, 3]
-total_sizes = [200, 300]
-feat_dims = [5, 10]
-train_ratio = 0.75
-val_ratio = 0.1
-global_updates_list = [3, 5]
-hyper_iters_list = [4, 8]
+distributions = ["laplace"]
+loss_types = ["mse"]
+L_values = [5]
+H_values = [0]
+total_sizes = [1000]
+feat_dims = [5]
+train_ratio = 0.3
+val_ratio = 0.2
+global_updates_list = [1]
+hyper_iters_list = [1]
 
 # 任意固定参数
 lambda_reg = 0.1
@@ -51,8 +51,9 @@ for dist, loss_type, L_val, H_val, tot_size, feat, n_global, n_hyper \
         "--scale", str(scale),
         "--seed", str(seed),
         "--device", device.type,
-        "--verbose"
-        # 如果想可视化，也可以加上 "--visualize"
+        "--verbose",
+        # 如果想可视化，也可以加上
+        "--visualize"
     ]
     
     print("Running: ", " ".join(cmd))
