@@ -136,8 +136,8 @@ def main():
         
         for name, beta in [
             ("AutoLoss", beta_autoloss),
-            ("L2 Reg", beta_reg_l2),
-            ("L1 Reg", beta_reg_l1)
+            ("MSE Regression", beta_reg_l2),
+            ("MAE Regression", beta_reg_l1)
         ]:
             # 计算并打印beta评估指标
             beta_mse, beta_mae = calc_beta_metrics(beta, beta_true)
@@ -152,8 +152,8 @@ def main():
         print("-" * 36)
         for name, beta in [
             ("AutoLoss", beta_autoloss),
-            ("L2 Reg", beta_reg_l2),
-            ("L1 Reg", beta_reg_l1)
+            ("MSE Regression", beta_reg_l2),
+            ("MAE Regression", beta_reg_l1)
         ]:
             # 计算并打印训练集评估指标
             mse, mae = calc_pred_metrics(X_train, y_train, beta)
@@ -168,8 +168,8 @@ def main():
         print("-" * 36)
         for name, beta in [
             ("AutoLoss", beta_autoloss),
-            ("L2 Reg", beta_reg_l2),
-            ("L1 Reg", beta_reg_l1)
+            ("MSE Regression", beta_reg_l2),
+            ("MAE Regression", beta_reg_l1)
         ]:
             # 计算并打印验证集评估指标
             mse, mae = calc_pred_metrics(X_val, y_val, beta)
@@ -194,8 +194,8 @@ def main():
         )
         for name, beta in [
             ("AutoLoss", beta_autoloss),
-            ("L2 Reg", beta_reg_l2),
-            ("L1 Reg", beta_reg_l1)
+            ("MSE Regression", beta_reg_l2),
+            ("MAE Regression", beta_reg_l1)
         ]:
             # 计算并打印验证集评估指标
             mse, mae = calc_pred_metrics(X_test, y_test, beta)

@@ -53,24 +53,65 @@ def train_reg_l2(X, y):
     return beta
 
 
-def train_reg_l1(X, y, lr=0.01, max_iter=1000, tol=1e-6):
-    """Train L1-regularized linear regression using proximal gradient descent."""
+def train_reg_l1(X, y, lr=0.01, max_iter=1000, tol=1e-6, weight_decay=0.0):
+    """
+    通过Adam优化器训练L1损失的线性回归
+    
+    Args:
+        X (torch.Tensor): 特征矩阵，形状为(n_samples, n_features)
+        y (torch.Tensor): 目标向量，形状为(n_samples,)
+        lr (float): 学习率
+        max_iter (int): 最大迭代次数
+        tol (float): 收敛容差
+        weight_decay (float): L2正则化强度（如需L1正则化可在损失函数中添加）
+        
+    Returns:
+        torch.Tensor: 学习到的回归系数
+    """
     n, p = X.shape
-    beta = torch.zeros(p, device=X.device)
     
+    # 初始化参数并设置为需要梯度
+    beta = torch.zeros(p, device=X.device, requires_grad=True)
+    
+    # 定义优化器
+    optimizer = torch.optim.Adam([beta], lr=lr, weight_decay=weight_decay)
+    
+    # 训练循环
+    prev_loss = float('inf')
     for i in range(max_iter):
-        grad = -2 * X.t() @ (y - X @ beta) / n
-        beta_new = beta - lr * grad
+        # 清除梯度
+        optimizer.zero_grad()
         
-        # Apply soft thresholding (proximal operator for L1)
-        beta_new = torch.sign(beta_new) * torch.clamp(torch.abs(beta_new) - lr, min=0)
+        # 前向传播
+        y_pred = X @ beta
         
-        if torch.norm(beta_new - beta) < tol:
+        # 计算L1损失 (MAE)
+        loss = torch.mean(torch.abs(y_pred - y))
+        
+        # 如果需要添加L1正则化，可以取消下面的注释并调整lambda_l1参数
+        # lambda_l1 = 0.01
+        # loss = loss + lambda_l1 * torch.norm(beta, 1)
+        
+        # 反向传播
+        loss.backward()
+        
+        # 更新参数
+        optimizer.step()
+        
+        # 检查收敛性
+        current_loss = loss.item()
+        if abs(prev_loss - current_loss) < tol:
+            print(f"收敛于第{i+1}次迭代，损失为{current_loss:.6f}")
             break
+            
+        prev_loss = current_loss
         
-        beta = beta_new
+        # # 每100次迭代打印一次损失
+        # if (i+1) % 100 == 0:
+        #     print(f"迭代 {i+1}/{max_iter}, 损失: {current_loss:.6f}")
     
-    return beta
+    # 返回最终学习到的参数，分离梯度
+    return beta.detach().clone()
 
 
 def calc_beta_metrics(beta, beta_true):
