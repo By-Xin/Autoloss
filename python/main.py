@@ -7,8 +7,8 @@ import matplotlib.pyplot as plt
 from datetime import datetime
 import os
 
-# 导入各模块
-from data_utils import generate_full_data, split_train_val, generate_test_data
+# 导入各模块 - 移除不存在的split_train_val函数
+from data_utils import generate_full_data, generate_test_data, train_val_sample
 from model_utils import solve_inner_qpth
 from training import train_hyperparams
 from evaluation import evaluate_and_print, compute_test_Xbeta, train_reg_l1, train_reg_l2,calc_beta_metrics, calc_pred_metrics
@@ -27,7 +27,8 @@ def main():
     parser.add_argument("--num_hyperparam_iterations", type=int, default=4, help="Iterations per hyperparam update loop")
     parser.add_argument("--lr", type=float, default=1e-2, help="Learning rate")
     parser.add_argument("--num_global_updates", type=int, default=5, help="Outer loops")
-    parser.add_argument("--num_training_samples", type=int, default=150, help="Number of training samples")
+    parser.add_argument("--train_ratio", type=float, default=0.75, help="Proportion of data used for training")
+    parser.add_argument("--val_ratio", type=float, default=0.25, help="Proportion of data used for validation")
     parser.add_argument("--seed", type=int, default=42, help="Random seed")
     parser.add_argument("--distribution", type=str, default='normal', choices=['normal','laplace'], help="Noise distribution")
     parser.add_argument("--scale", type=float, default=1.0, help="Scale param for noise distribution")
@@ -53,9 +54,6 @@ def main():
                                          seed=args.seed,
                                          device=device)
 
-    # 2) 切分train/val
-    X_train, y_train, X_val, y_val = split_train_val(X, y, args.num_training_samples)
-
     # 3) 初始化超参数
     U = torch.randn(args.L, device=device, requires_grad=True)
     V = torch.randn(args.L, device=device, requires_grad=True)
@@ -69,7 +67,24 @@ def main():
         if args.verbose:
             print(f"\nGlobal iteration {it+1}/{args.num_global_updates} ...")
 
-        U, V, S, T, val_loss_hist = train_hyperparams(
+        # 计算训练集和验证集的实际样本数量
+        train_size = int(args.total_sample_size * args.train_ratio)
+        val_size = int(args.total_sample_size * args.val_ratio)
+        
+        # 确保样本总数不超过总体样本量
+        if train_size + val_size > args.total_sample_size:
+            val_size = args.total_sample_size - train_size
+
+        # 1) 生成训练和验证数据
+        X_train, y_train, X_val, y_val = train_val_sample(  
+            X=X, y=y,
+            train_size=train_size,
+            val_size=val_size,
+            seed=args.seed + it,
+            device=device
+        )
+
+        U, V, S, T, val_loss_hist, beta_autoloss = train_hyperparams(
             X_train, y_train,
             X_val,   y_val,
             U, V, S, T, tau,
@@ -79,12 +94,12 @@ def main():
             loss_type=args.loss_type,
             optimizer_choice=args.optimizer_choice
         )
-        beta_autoloss = solve_inner_qpth(U, V, S, T, tau, X_train, y_train, args.lambda_reg)
+        # beta_autoloss = solve_inner_qpth(U, V, S, T, tau, X_train, y_train, args.lambda_reg)
         all_val_losses.append(val_loss_hist)
 
-        if args.verbose:
-            diff = beta_true - beta_autoloss
-            print(f"> Beta difference: {diff.detach().cpu().numpy()}")
+        # if args.verbose:
+        #     diff = beta_true - beta_autoloss
+        #     print(f"> Beta difference: {diff.detach().cpu().numpy()}")
     
     # 打包结果
     autoloss_result = {
@@ -105,7 +120,6 @@ def main():
 
     # 评估
     if args.verbose:
-    
         # 2. Calculate beta comparison metrics
         beta_reg_l2 = train_reg_l2(X_train, y_train)
         beta_reg_l1 = train_reg_l1(X_train, y_train, lr=args.lr, max_iter=1000)
@@ -114,16 +128,23 @@ def main():
         print("\n----- Beta Comparison -----")
         print(f"{'Method':<12} {'Beta MSE':<12} {'Beta MAE':<12}")
         print("-" * 36)
+        
+        # 创建用于保存的指标字典
+        beta_metrics_dict = {}
+        train_metrics_dict = {}
+        val_metrics_dict = {}
+        
         for name, beta in [
             ("AutoLoss", beta_autoloss),
             ("L2 Reg", beta_reg_l2),
             ("L1 Reg", beta_reg_l1)
         ]:
+            # 计算并打印beta评估指标
             beta_mse, beta_mae = calc_beta_metrics(beta, beta_true)
             print(f"{name:<12} {beta_mse:<12.6f} {beta_mae:<12.6f}")
-        
-        # 4. Define functions to calculate prediction metrics
-
+            
+            # 保存到字典
+            beta_metrics_dict[name] = {'mse': beta_mse, 'mae': beta_mae}
         
         # 5. Evaluate predictions on train data
         print("\n----- Training Data Evaluation -----")
@@ -134,8 +155,12 @@ def main():
             ("L2 Reg", beta_reg_l2),
             ("L1 Reg", beta_reg_l1)
         ]:
+            # 计算并打印训练集评估指标
             mse, mae = calc_pred_metrics(X_train, y_train, beta)
             print(f"{name:<12} {mse:<12.6f} {mae:<12.6f}")
+            
+            # 保存到字典
+            train_metrics_dict[name] = {'mse': mse, 'mae': mae}
         
         # 6. Evaluate predictions on validation data
         print("\n----- Validation Data Evaluation -----")
@@ -146,10 +171,20 @@ def main():
             ("L2 Reg", beta_reg_l2),
             ("L1 Reg", beta_reg_l1)
         ]:
+            # 计算并打印验证集评估指标
             mse, mae = calc_pred_metrics(X_val, y_val, beta)
             print(f"{name:<12} {mse:<12.6f} {mae:<12.6f}")
+            
+            # 保存到字典
+            val_metrics_dict[name] = {'mse': mse, 'mae': mae}
         print("\n")
-# 可视化 Val loss
+    else:
+        # 如果不是verbose模式，创建空字典
+        beta_metrics_dict = None
+        train_metrics_dict = None
+        val_metrics_dict = None
+
+    # 可视化 Val loss
     val_losses_flat = [v for iteration in all_val_losses for v in iteration]
     if args.visualize:
         import matplotlib.pyplot as plt
@@ -162,11 +197,11 @@ def main():
         plt.legend()
         plt.show()
 
-        pkl_path, txt_path = save_experiment_results(
-            autoloss_result, args, beta_autoloss, 
-            U, V, S, T, tau, beta_true, 
-            all_val_losses, X_train, y_train, X_val, y_val
-        )
+    pkl_path, txt_path = save_experiment_results(
+        autoloss_result, args, beta_autoloss, 
+        U, V, S, T, tau, beta_true, 
+        all_val_losses, beta_metrics_dict, train_metrics_dict, val_metrics_dict
+    )
 
 if __name__ == "__main__":
     main()

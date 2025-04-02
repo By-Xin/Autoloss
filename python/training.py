@@ -52,7 +52,7 @@ def train_hyperparams(X_train, y_train,
     
     for step in progress_bar:
         optimizer.zero_grad()
-        loss_outer, _ = compute_outer_loss(X_train, y_train,
+        loss_outer, beta_opt = compute_outer_loss(X_train, y_train,
                                            X_val,   y_val,
                                            U, V, S, T, tau,
                                            lambda_reg,
@@ -64,4 +64,4 @@ def train_hyperparams(X_train, y_train,
         loss_outer_history.append(loss_val)
         progress_bar.set_postfix(val_loss=f"{loss_val:.6f}")
 
-    return U, V, S, T, loss_outer_history
+    return U, V, S, T, loss_outer_history, beta_opt

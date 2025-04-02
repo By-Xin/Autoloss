@@ -26,14 +26,53 @@ def generate_full_data(n, d, distribution='laplace', scale=1.0, seed=42, device=
     y = X @ beta_true + eps
     return X, y, beta_true
 
+def train_val_sample(train_size, val_size, X, y, seed=42, device="cpu"):
+    """
+    无放回抽样，先抽取 train_portion 比例的训练样本，再从剩余样本中抽取 val_portion 比例的验证样本
+    
+    参数:
+    train_portion - 训练集占总数据的比例
+    val_portion - 验证集占总数据的比例
+    X - 特征数据
+    y - 标签数据
+    seed - 随机种子
+    device - 计算设备
+    
+    返回:
+    X_train, y_train - 训练数据
+    X_val, y_val - 验证数据
+    """
+    torch.manual_seed(seed)
+    n = X.shape[0]
 
-def split_train_val(X, y, n_train):
-    """
-    简单切分前 n_train 为训练, 后面的为验证
-    """
-    X_train, y_train = X[:n_train], y[:n_train]
-    X_val,   y_val   = X[n_train:], y[n_train:]
+    # 确保 train_size + val_size <= n
+    if train_size + val_size > n:
+        raise ValueError("train_size + val_size must be less than or equal to total number of samples.")
+    
+
+    # 生成随机排列的索引
+    indices = torch.randperm(n)
+    
+    # 抽取训练集
+    train_indices = indices[:train_size]
+    X_train = X[train_indices].clone().detach().to(device)
+    y_train = y[train_indices].clone().detach().to(device)
+    
+    # 从剩余数据中抽取验证集
+    val_indices = indices[train_size:train_size + val_size]
+    X_val = X[val_indices].clone().detach().to(device)
+    y_val = y[val_indices].clone().detach().to(device)
+    
     return X_train, y_train, X_val, y_val
+
+
+# def split_train_val(X, y, n_train):
+#     """
+#     简单切分前 n_train 为训练, 后面的为验证
+#     """
+#     X_train, y_train = X[:n_train], y[:n_train]
+#     X_val,   y_val   = X[n_train:], y[n_train:]
+#     return X_train, y_train, X_val, y_val
 
 
 def generate_test_data(num_test_sample, feature_dimension, beta_true,

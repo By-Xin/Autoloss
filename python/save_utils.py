@@ -4,7 +4,7 @@ import torch
 from datetime import datetime
 
 def save_experiment_results(autoloss_result, args, beta_opt, U, V, S, T, tau, beta_true, 
-                           all_val_losses, X_train, y_train, X_val, y_val):
+                           all_val_losses, beta_metrics=None, train_metrics=None, val_metrics=None):
     """
     保存实验结果到pkl和txt文件
     
@@ -14,7 +14,9 @@ def save_experiment_results(autoloss_result, args, beta_opt, U, V, S, T, tau, be
         beta_opt, U, V, S, T, tau: 模型参数
         beta_true: 真实beta值
         all_val_losses: 验证损失历史
-        X_train, y_train, X_val, y_val: 训练和验证数据
+        beta_metrics: 各方法beta估计准确性指标
+        train_metrics: 各方法在训练集上的预测指标 
+        val_metrics: 各方法在验证集上的预测指标
         
     Returns:
         tuple: (pkl_path, txt_path) 保存的文件路径
@@ -30,31 +32,40 @@ def save_experiment_results(autoloss_result, args, beta_opt, U, V, S, T, tau, be
 
     # 生成时间戳和文件名
     timestamp = datetime.now().strftime('%m%d%H%M')
+    
+    # 安全获取参数，避免缺少参数导致的错误
+    try:
+        dist_char = args.distribution[0] if hasattr(args, 'distribution') and args.distribution else 'X'
+    except (IndexError, TypeError):
+        dist_char = 'X'
+    
     base_filename = (
-        f'D{args.distribution[0]}'
-        f'M{args.loss_type}'
-        f'L{args.L}'
-        f'H{args.H}'
-        f'N{args.total_sample_size}'
-        f'F{args.feature_dimension}'
-        f'T{args.num_training_samples}'
-        f'G{args.num_global_updates}'
-        f'H{args.num_hyperparam_iterations}'
+        f'D{dist_char}'
+        f'M{getattr(args, "loss_type", "X")}'
+        f'L{getattr(args, "L", 0)}'
+        f'H{getattr(args, "H", 0)}'
+        f'N{getattr(args, "total_sample_size", 0)}'
+        f'F{getattr(args, "feature_dimension", 0)}'
+        f'TR{getattr(args, "train_ratio", 0)}'
+        f'VR{getattr(args, "val_ratio", 0)}'
+        f'G{getattr(args, "num_global_updates", 0)}'
+        f'H{getattr(args, "num_hyperparam_iterations", 0)}'
         f'{timestamp}'
     )
     
-    # 计算训练和验证指标
-    with torch.no_grad():
-        train_metrics = evaluate_and_print(X_train, y_train, beta_opt, beta_true, label="", return_metrics=True)
-        val_metrics = evaluate_and_print(X_val, y_val, beta_opt, beta_true, label="", return_metrics=True)
-    
     # 更新结果字典
     autoloss_result.update({
-        "train_metrics": train_metrics,
-        "val_metrics": val_metrics,
         "all_val_losses": all_val_losses,
         "timestamp": timestamp
     })
+    
+    # 添加评估指标（如果提供）
+    if beta_metrics is not None:
+        autoloss_result["beta_metrics"] = beta_metrics
+    if train_metrics is not None:
+        autoloss_result["train_metrics"] = train_metrics
+    if val_metrics is not None:
+        autoloss_result["val_metrics"] = val_metrics
     
     # 保存 pkl 文件
     pkl_path = os.path.join(results_pkl_dir, f'{base_filename}.pkl')
@@ -68,13 +79,13 @@ def save_experiment_results(autoloss_result, args, beta_opt, U, V, S, T, tau, be
         f.write(f"AutoLoss Experiment Results\n")
         f.write(f"================{timestamp}================\n\n")
         f.write(f"Configuration:\n")
-        f.write(f"- Distribution: {args.distribution}\n")
-        f.write(f"- Loss Type: {args.loss_type}\n")
-        f.write(f"- Optimizer: {args.optimizer_choice}\n")
-        f.write(f"- Parameters: L={args.L}, H={args.H}\n")
-        f.write(f"- Samples: {args.total_sample_size} (train={args.num_training_samples})\n")
-        f.write(f"- Features: {args.feature_dimension}\n")
-        f.write(f"- Updates: {args.num_global_updates} global, {args.num_hyperparam_iterations} hyper\n\n")
+        f.write(f"- Distribution: {getattr(args, 'distribution', 'N/A')}\n")
+        f.write(f"- Loss Type: {getattr(args, 'loss_type', 'N/A')}\n")
+        f.write(f"- Optimizer: {getattr(args, 'optimizer_choice', 'N/A')}\n")
+        f.write(f"- Parameters: L={getattr(args, 'L', 'N/A')}, H={getattr(args, 'H', 'N/A')}\n")
+        f.write(f"- Samples: {getattr(args, 'total_sample_size', 'N/A')} (train={getattr(args, 'num_training_samples', 'N/A')})\n")
+        f.write(f"- Features: {getattr(args, 'feature_dimension', 'N/A')}\n")
+        f.write(f"- Updates: {getattr(args, 'num_global_updates', 'N/A')} global, {getattr(args, 'num_hyperparam_iterations', 'N/A')} hyper\n\n")
         
         # 2. 模型参数
         f.write(f"Model Parameters:\n")
@@ -86,18 +97,35 @@ def save_experiment_results(autoloss_result, args, beta_opt, U, V, S, T, tau, be
         f.write(f"- T: {T.detach().cpu().numpy()}\n")
         f.write(f"- tau: {tau.cpu().numpy()}\n\n")
         
-        # 3. 评估指标
-        f.write(f"Evaluation Metrics:\n")
-        f.write(f"-------------------\n")
-        f.write(f"Training Set:\n")
-        for metric, value in train_metrics.items():
-            f.write(f"  {metric}: {value:.6f}\n")
+        # 3. 评估指标 (如果提供)
+        if beta_metrics is not None:
+            f.write(f"Beta Comparison Metrics:\n")
+            f.write(f"--------------------\n")
+            f.write(f"{'Method':<12} {'Beta MSE':<12} {'Beta MAE':<12}\n")
+            f.write("-" * 36 + "\n")
+            for method, metrics in beta_metrics.items():
+                f.write(f"{method:<12} {metrics['mse']:<12.6f} {metrics['mae']:<12.6f}\n")
+            f.write("\n")
         
-        f.write(f"\nValidation Set:\n")
-        for metric, value in val_metrics.items():
-            f.write(f"  {metric}: {value:.6f}\n\n")
+        if train_metrics is not None:
+            f.write(f"Training Data Evaluation:\n")
+            f.write(f"------------------------\n")
+            f.write(f"{'Method':<12} {'MSE':<12} {'MAE':<12}\n")
+            f.write("-" * 36 + "\n")
+            for method, metrics in train_metrics.items():
+                f.write(f"{method:<12} {metrics['mse']:<12.6f} {metrics['mae']:<12.6f}\n")
+            f.write("\n")
         
-        # 4. 训练历史 (放在最后)
+        if val_metrics is not None:
+            f.write(f"Validation Data Evaluation:\n")
+            f.write(f"--------------------------\n")
+            f.write(f"{'Method':<12} {'MSE':<12} {'MAE':<12}\n")
+            f.write("-" * 36 + "\n")
+            for method, metrics in val_metrics.items():
+                f.write(f"{method:<12} {metrics['mse']:<12.6f} {metrics['mae']:<12.6f}\n")
+            f.write("\n")
+        
+        # 4. 训练历史
         f.write(f"Training History:\n")
         f.write(f"----------------\n")
         val_losses_flat = [v for iteration in all_val_losses for v in iteration]
