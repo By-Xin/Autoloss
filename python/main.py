@@ -63,6 +63,17 @@ def main():
 
     # 多轮外层更新
     all_val_losses = []
+
+    # 初始化优化器 - 移到外循环
+    if args.optimizer_choice == "adam":
+        optimizer = torch.optim.Adam([U, V, S, T], lr=args.lr)
+    elif args.optimizer_choice == "sgd":
+        optimizer = torch.optim.SGD([U, V, S, T], lr=args.lr)
+    elif args.optimizer_choice == "adamw":
+        optimizer = torch.optim.AdamW([U, V, S, T], lr=args.lr)
+    else:
+        raise ValueError(f"不支持的优化器选择: {args.optimizer_choice}.")
+
     for it in range(args.num_global_updates):
         if args.verbose:
             print(f"\nGlobal iteration {it+1}/{args.num_global_updates} ...")
@@ -86,21 +97,16 @@ def main():
 
         U, V, S, T, val_loss_hist, beta_autoloss = train_hyperparams(
             X_train, y_train,
-            X_val,   y_val,
+            X_val, y_val,
             U, V, S, T, tau,
             lambda_reg=args.lambda_reg,
-            lr=args.lr,
+            optimizer=optimizer,  # 传递优化器而不是创建新的
             num_hyperparam_iterations=args.num_hyperparam_iterations,
-            loss_type=args.loss_type,
-            optimizer_choice=args.optimizer_choice
+            loss_type=args.loss_type
         )
-        # beta_autoloss = solve_inner_qpth(U, V, S, T, tau, X_train, y_train, args.lambda_reg)
+        
         all_val_losses.append(val_loss_hist)
 
-        # if args.verbose:
-        #     diff = beta_true - beta_autoloss
-        #     print(f"> Beta difference: {diff.detach().cpu().numpy()}")
-    
     # 打包结果
     autoloss_result = {
         "U": U.detach().clone(),

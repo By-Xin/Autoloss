@@ -28,32 +28,22 @@ def compute_outer_loss(X_train, y_train,
 
 
 def train_hyperparams(X_train, y_train,
-                      X_val,   y_val,
+                      X_val, y_val,
                       U, V, S, T, tau,
                       lambda_reg,
-                      lr=1e-2,
+                      optimizer,  # 现在接收外部传入的优化器
                       num_hyperparam_iterations=50,
-                      loss_type="mse",
-                      optimizer_choice="adam"):
+                      loss_type="mse"):
     """
-    用 PyTorch 优化器更新 U, V, S, T。可指定 optimizer_choice='adam','sgd','adamw'。
+    使用传入的优化器更新 U, V, S, T 超参数
     """
-    if optimizer_choice == "adam":
-        optimizer = torch.optim.Adam([U, V, S, T], lr=lr)
-    elif optimizer_choice == "sgd":
-        optimizer = torch.optim.SGD([U, V, S, T], lr=lr)
-    elif optimizer_choice == "adamw":
-        optimizer = torch.optim.AdamW([U, V, S, T], lr=lr)
-    else:
-        raise ValueError(f"Unsupported optimizer choice: {optimizer_choice}.")
-
     loss_outer_history = []
     progress_bar = trange(num_hyperparam_iterations, desc='Hyperparam Updates', leave=True)
     
     for step in progress_bar:
         optimizer.zero_grad()
         loss_outer, beta_opt = compute_outer_loss(X_train, y_train,
-                                           X_val,   y_val,
+                                           X_val, y_val,
                                            U, V, S, T, tau,
                                            lambda_reg,
                                            loss_type)
