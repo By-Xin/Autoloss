@@ -2,6 +2,7 @@
 
 import torch
 import matplotlib.pyplot as plt
+import datetime  # Add this import for timestamp
 
 def reHU_piecewise(x, gamma):
     """
@@ -68,4 +69,14 @@ def plot_theoretical_autoloss(params, r_min=-10, r_max=10, num_points=200):
     plt.title("Theoretical Autoloss")
     plt.grid(True)
     plt.legend()
-    plt.show()
+    # plt.show()
+    
+    # Generate filename with parameters and timestamp
+    timestamp = datetime.datetime.now().strftime("%m%d_%H%M%S")
+    param_info = f"L{U}_H{S}"
+    filename = f"TheoryLoss_{param_info}_{timestamp}.png"
+    
+    # Save the figure
+    plt.savefig(filename)
+    print(f"Plot saved as: {filename}")
+

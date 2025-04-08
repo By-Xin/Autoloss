@@ -214,6 +214,8 @@ def main():
     val_losses_flat = [v for iteration in all_val_losses for v in iteration]
     if args.visualize:
         import matplotlib.pyplot as plt
+        from datetime import datetime
+        
         plt.figure(figsize=(8,6))
         plt.plot(val_losses_flat, label="Val Loss")
         plt.xlabel("Iteration")
@@ -221,7 +223,22 @@ def main():
         plt.title(f"Val Loss Curve ({args.distribution}, {args.loss_type}, Optim={args.optimizer_choice})")
         plt.grid(True)
         plt.legend()
-        #plt.show()
+        
+        # 创建保存目录
+        save_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'plots')
+        os.makedirs(save_dir, exist_ok=True)
+        
+        # 创建文件名，包含参数设置和时间戳
+        timestamp = datetime.now().strftime("%m%d_%H%M")
+        filename = f"valloss_{args.distribution}_{args.loss_type}_{args.optimizer_choice}_{timestamp}.png"
+        filepath = os.path.join(save_dir, filename)
+        
+        # 保存图表
+        plt.savefig(filepath, dpi=300, bbox_inches='tight')
+        plt.close()
+        
+        print(f"Loss curve saved to: {filepath}")
+        
         plot_theoretical_autoloss(autoloss_result, r_min=-10, r_max=10, num_points=200)
     pkl_path, txt_path = save_experiment_results(
         autoloss_result, args, beta_autoloss, 
