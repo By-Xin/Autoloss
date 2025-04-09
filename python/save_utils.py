@@ -4,7 +4,7 @@ import torch
 from datetime import datetime
 
 def save_experiment_results(autoloss_result, args, beta_opt, U, V, S, T, tau, beta_true, 
-                           all_val_losses, beta_metrics=None, train_metrics=None, val_metrics=None):
+                           all_val_losses, beta_metrics=None, train_metrics=None, val_metrics=None,test_metrics=None):
     """
     保存实验结果到pkl和txt文件
     
@@ -66,6 +66,8 @@ def save_experiment_results(autoloss_result, args, beta_opt, U, V, S, T, tau, be
         autoloss_result["train_metrics"] = train_metrics
     if val_metrics is not None:
         autoloss_result["val_metrics"] = val_metrics
+    if test_metrics is not None:
+        autoloss_result["test_metrics"] = test_metrics
     
     # 保存 pkl 文件
     pkl_path = os.path.join(results_pkl_dir, f'{base_filename}.pkl')
@@ -122,6 +124,15 @@ def save_experiment_results(autoloss_result, args, beta_opt, U, V, S, T, tau, be
             f.write(f"{'Method':<12} {'MSE':<12} {'MAE':<12}\n")
             f.write("-" * 36 + "\n")
             for method, metrics in val_metrics.items():
+                f.write(f"{method:<12} {metrics['mse']:<12.6f} {metrics['mae']:<12.6f}\n")
+            f.write("\n")
+        
+        if test_metrics is not None:
+            f.write(f"Test Data Evaluation:\n")
+            f.write(f"--------------------\n")
+            f.write(f"{'Method':<12} {'MSE':<12} {'MAE':<12}\n")
+            f.write("-" * 36 + "\n")
+            for method, metrics in test_metrics.items():
                 f.write(f"{method:<12} {metrics['mse']:<12.6f} {metrics['mae']:<12.6f}\n")
             f.write("\n")
         

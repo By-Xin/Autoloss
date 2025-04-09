@@ -5,19 +5,19 @@ import torch
 
 distributions = ["laplace"]
 loss_types = ["mse"]
-L_values = [5]
+L_values = [10]
 H_values = [0]
 total_sizes = [1000]
 feat_dims = [5]
 train_ratio = 0.3
 val_ratio = 0.2
-global_updates_list = [1]
-hyper_iters_list = [20]
+global_updates_list = [10]
+hyper_iters_list = [1]
 
 # 任意固定参数
 lambda_reg = 0.1
 lr = 1e-2
-scale = 1.0
+scale = 10.0
 seed = 42
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -34,7 +34,7 @@ for dist, loss_type, L_val, H_val, tot_size, feat, n_global, n_hyper \
     ):
     
     cmd = [
-        "python", "python/main.py",
+        "python", "main.py",
         "--distribution", dist,
         "--loss_type", loss_type,
         "--optimizer_choice", "adam",

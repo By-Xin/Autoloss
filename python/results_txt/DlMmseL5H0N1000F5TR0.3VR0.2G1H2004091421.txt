@@ -1,0 +1,76 @@
+AutoLoss Experiment Results
+================04091421================
+
+Configuration:
+- Distribution: laplace
+- Loss Type: mse
+- Optimizer: adam
+- Parameters: L=5, H=0
+- Samples: 1000 (train=N/A)
+- Features: 5
+- Updates: 1 global, 20 hyper
+
+Model Parameters:
+----------------
+- Final Beta: [6.311652   0.05784181 3.9806788  0.49782297 1.4417486 ]
+- U: [-0.5097763  1.2095168  0.6207227 -0.9198209  0.5617059]
+- V: [-0.7039734  -1.8865277  -0.88785094 -1.6621145  -0.43695447]
+- S: []
+- T: []
+- tau: []
+
+Beta Comparison Metrics:
+--------------------
+Method       Beta MSE     Beta MAE    
+------------------------------------
+AutoLoss     0.011716     0.088783    
+MSE Regression 0.009783     0.071486    
+MAE Regression 0.005520     0.061781    
+
+Training Data Evaluation:
+------------------------
+Method       MSE          MAE         
+------------------------------------
+AutoLoss     2.204919     1.084765    
+MSE Regression 2.194366     1.081256    
+MAE Regression 2.210424     1.075965    
+
+Validation Data Evaluation:
+--------------------------
+Method       MSE          MAE         
+------------------------------------
+AutoLoss     2.154105     1.051848    
+MSE Regression 2.139087     1.042463    
+MAE Regression 2.100229     1.023499    
+
+Training History:
+----------------
+Validation Loss Overview (flattened): 20 iterations
+1:2.232489  2:2.224972  3:2.228062  4:2.223504  5:2.223836
+6:2.232004  7:2.223132  8:2.222434  9:2.224595  10:2.223773
+11:2.225821  12:2.226190  13:2.228426  14:2.228176  15:2.228313
+16:2.235157  17:2.235252  18:2.227565  19:2.226975  20:2.225674
+
+Detailed Validation Loss by Global Iteration:
+
+Global Iteration 1:
+  Hyper step 1: 2.232489
+  Hyper step 2: 2.224972
+  Hyper step 3: 2.228062
+  Hyper step 4: 2.223504
+  Hyper step 5: 2.223836
+  Hyper step 6: 2.232004
+  Hyper step 7: 2.223132
+  Hyper step 8: 2.222434
+  Hyper step 9: 2.224595
+  Hyper step 10: 2.223773
+  Hyper step 11: 2.225821
+  Hyper step 12: 2.226190
+  Hyper step 13: 2.228426
+  Hyper step 14: 2.228176
+  Hyper step 15: 2.228313
+  Hyper step 16: 2.235157
+  Hyper step 17: 2.235252
+  Hyper step 18: 2.227565
+  Hyper step 19: 2.226975
+  Hyper step 20: 2.225674

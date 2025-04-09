@@ -128,7 +128,7 @@ def main():
     if args.verbose:
         # 2. Calculate beta comparison metrics
         beta_reg_l2 = train_reg_l2(X_train, y_train)
-        beta_reg_l1 = train_reg_l1(X_train, y_train)
+        beta_reg_l1 = train_reg_l1(X_train, y_train, lr=args.lr, max_iter=1000, tol=1e-4, weight_decay=0.0)
         
         # 3. Print beta comparison table
         print("\n----- Beta Comparison -----")
@@ -139,6 +139,7 @@ def main():
         beta_metrics_dict = {}
         train_metrics_dict = {}
         val_metrics_dict = {}
+        test_metrics_dict = {}
         
         for name, beta in [
             ("AutoLoss", beta_autoloss),
@@ -208,13 +209,14 @@ def main():
             print(f"{name:<12} {mse:<12.6f} {mae:<12.6f}")
             
             # 保存到字典
-            val_metrics_dict[name] = {'mse': mse, 'mae': mae}
+            test_metrics_dict[name] = {'mse': mse, 'mae': mae}
         print("\n")
     else:
         # 如果不是verbose模式，创建空字典
         beta_metrics_dict = None
         train_metrics_dict = None
         val_metrics_dict = None
+        test_metrics_dict = None
 
     # 可视化 Val loss
     val_losses_flat = [v for iteration in all_val_losses for v in iteration]
@@ -249,7 +251,7 @@ def main():
     pkl_path, txt_path = save_experiment_results(
         autoloss_result, args, beta_autoloss, 
         U, V, S, T, tau, beta_true, 
-        all_val_losses, beta_metrics_dict, train_metrics_dict, val_metrics_dict
+        all_val_losses, beta_metrics_dict, train_metrics_dict, val_metrics_dict, test_metrics_dict,
     )
 
 if __name__ == "__main__":

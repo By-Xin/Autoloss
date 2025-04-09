@@ -54,7 +54,55 @@ def train_reg_l2(X, y):
     return beta
 
 
-def train_reg_l1(X, y):
+def train_reg_l1(X, y, lr=0.01, max_iter=1000, tol=1e-4, weight_decay=0.0):
+    """
+    通过Adam优化器训练L1损失的线性回归
+    
+    Args:
+        X (torch.Tensor): 特征矩阵，形状为(n_samples, n_features)
+        y (torch.Tensor): 目标向量，形状为(n_samples,)
+        lr (float): 学习率，默认0.01
+        max_iter (int): 最大迭代次数，默认1000
+        tol (float): 收敛容差，默认1e-4
+        weight_decay (float): L2正则化强度，默认0.0
+        
+    Returns:
+        torch.Tensor: 学习到的回归系数
+    """
+    # 确保输入在CUDA上并转换为float类型
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    X = X.to(device).float()
+    y = y.to(device).float()
+    
+    # 初始化回归系数
+    beta = torch.zeros(X.shape[1], device=device, requires_grad=True)
+    
+    # 定义优化器
+    optimizer = torch.optim.Adam([beta], lr=lr, weight_decay=weight_decay)
+    
+    # 训练循环
+    for _ in range(max_iter):
+        # 保存上一次的beta用于收敛检查
+        beta_old = beta.clone().detach()
+        
+        # 前向传播计算预测值
+        y_pred = X @ beta
+        
+        # 计算L1损失（MAE）
+        loss = torch.mean(torch.abs(y - y_pred))
+        
+        # 反向传播
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
+        
+        # 检查收敛
+        if torch.max(torch.abs(beta - beta_old)) < tol:
+            break
+    
+    return beta.detach()  # 返回不需要梯度的tensor
+
+def train_reg_l1_cvxpy(X, y):
     """
     通过Adam优化器训练L1损失的线性回归
     
