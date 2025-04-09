@@ -2,6 +2,7 @@
 
 import torch
 import numpy as np
+import cvxpy as cp
 
 def calc_beta_metrics(beta, beta_true):
             beta_mse = ((beta - beta_true)**2).mean().item()
@@ -53,7 +54,7 @@ def train_reg_l2(X, y):
     return beta
 
 
-def train_reg_l1(X, y, lr=0.01, max_iter=1000, tol=1e-6, weight_decay=0.0):
+def train_reg_l1(X, y):
     """
     通过Adam优化器训练L1损失的线性回归
     
@@ -68,50 +69,12 @@ def train_reg_l1(X, y, lr=0.01, max_iter=1000, tol=1e-6, weight_decay=0.0):
     Returns:
         torch.Tensor: 学习到的回归系数
     """
-    n, p = X.shape
-    
-    # 初始化参数并设置为需要梯度
-    beta = torch.zeros(p, device=X.device, requires_grad=True)
-    
-    # 定义优化器
-    optimizer = torch.optim.Adam([beta], lr=lr, weight_decay=weight_decay)
-    
-    # 训练循环
-    prev_loss = float('inf')
-    for i in range(max_iter):
-        # 清除梯度
-        optimizer.zero_grad()
-        
-        # 前向传播
-        y_pred = X @ beta
-        
-        # 计算L1损失 (MAE)
-        loss = torch.mean(torch.abs(y_pred - y))
-        
-        # 如果需要添加L1正则化，可以取消下面的注释并调整lambda_l1参数
-        # lambda_l1 = 0.01
-        # loss = loss + lambda_l1 * torch.norm(beta, 1)
-        
-        # 反向传播
-        loss.backward()
-        
-        # 更新参数
-        optimizer.step()
-        
-        # 检查收敛性
-        current_loss = loss.item()
-        if abs(prev_loss - current_loss) < tol:
-            print(f"收敛于第{i+1}次迭代，损失为{current_loss:.6f}")
-            break
-            
-        prev_loss = current_loss
-        
-        # # 每100次迭代打印一次损失
-        # if (i+1) % 100 == 0:
-        #     print(f"迭代 {i+1}/{max_iter}, 损失: {current_loss:.6f}")
-    
-    # 返回最终学习到的参数，分离梯度
-    return beta.detach().clone()
+    beta = cp.Variable(X.shape[1])
+    objective = cp.Minimize(cp.norm1(y - X @ beta))
+    prob = cp.Problem(objective)
+    prob.solve()
+    beta = torch.tensor(beta.value).float()
+    return beta
 
 
 def calc_beta_metrics(beta, beta_true):

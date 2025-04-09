@@ -1,0 +1,86 @@
+AutoLoss Experiment Results
+================04022340================
+
+Configuration:
+- Distribution: laplace
+- Loss Type: mae
+- Optimizer: adam
+- Parameters: L=10, H=0
+- Samples: 1000 (train=N/A)
+- Features: 5
+- Updates: 5 global, 4 hyper
+
+Model Parameters:
+----------------
+- Final Beta: [8.675337  9.166658  3.8233614 9.59411   3.8525605]
+- U: [-0.6129054  -0.2392382   0.4248609  -0.00983746  1.1576021  -1.2852442
+  0.45031902  0.10049561  1.2948844   1.1477677 ]
+- V: [ 1.5338284  -1.6303928  -1.2220381  -0.99763864 -0.3482786  -0.5120374
+  0.00978384  0.9410398   0.9896757   2.2588286 ]
+- S: []
+- T: []
+- tau: []
+
+Beta Comparison Metrics:
+--------------------
+Method       Beta MSE     Beta MAE    
+------------------------------------
+AutoLoss     0.004943     0.044445    
+L2 Reg       0.000999     0.026238    
+L1 Reg       15.278814    3.721205    
+
+Training Data Evaluation:
+------------------------
+Method       MSE          MAE         
+------------------------------------
+AutoLoss     1.847906     0.985040    
+MSE          1.832815     0.984156    
+MAE          77.375069    7.117669    
+
+Validation Data Evaluation:
+--------------------------
+Method       MSE          MAE         
+------------------------------------
+AutoLoss     2.073036     1.049737    
+MSE          2.060478     1.042033    
+MAE          84.628448    7.390980    
+
+Training History:
+----------------
+Validation Loss Overview (flattened): 20 iterations
+1:1.090062  2:1.089353  3:1.088331  4:1.087528  5:0.950378
+6:0.949037  7:0.948801  8:0.947796  9:1.111937  10:1.111713
+11:1.111015  12:1.111314  13:1.001278  14:1.001039  15:1.000358
+16:0.999149  17:1.015184  18:1.013657  19:1.012915  20:1.012129
+
+Detailed Validation Loss by Global Iteration:
+
+Global Iteration 1:
+  Hyper step 1: 1.090062
+  Hyper step 2: 1.089353
+  Hyper step 3: 1.088331
+  Hyper step 4: 1.087528
+
+Global Iteration 2:
+  Hyper step 1: 0.950378
+  Hyper step 2: 0.949037
+  Hyper step 3: 0.948801
+  Hyper step 4: 0.947796
+
+Global Iteration 3:
+  Hyper step 1: 1.111937
+  Hyper step 2: 1.111713
+  Hyper step 3: 1.111015
+  Hyper step 4: 1.111314
+
+Global Iteration 4:
+  Hyper step 1: 1.001278
+  Hyper step 2: 1.001039
+  Hyper step 3: 1.000358
+  Hyper step 4: 0.999149
+
+Global Iteration 5:
+  Hyper step 1: 1.015184
+  Hyper step 2: 1.013657
+  Hyper step 3: 1.012915
+  Hyper step 4: 1.012129

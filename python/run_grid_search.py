@@ -12,7 +12,7 @@ feat_dims = [5]
 train_ratio = 0.3
 val_ratio = 0.2
 global_updates_list = [1]
-hyper_iters_list = [1]
+hyper_iters_list = [20]
 
 # 任意固定参数
 lambda_reg = 0.1
@@ -34,7 +34,7 @@ for dist, loss_type, L_val, H_val, tot_size, feat, n_global, n_hyper \
     ):
     
     cmd = [
-        "python", "main.py",
+        "python", "python/main.py",
         "--distribution", dist,
         "--loss_type", loss_type,
         "--optimizer_choice", "adam",

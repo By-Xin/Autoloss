@@ -1,0 +1,76 @@
+AutoLoss Experiment Results
+================04082324================
+
+Configuration:
+- Distribution: laplace
+- Loss Type: mse
+- Optimizer: adam
+- Parameters: L=5, H=0
+- Samples: 1000 (train=N/A)
+- Features: 5
+- Updates: 1 global, 20 hyper
+
+Model Parameters:
+----------------
+- Final Beta: [8.923227  9.118232  3.7362018 9.515143  4.2692933]
+- U: [-0.43883544 -0.16385806  0.48744193  0.09359613  1.2394216 ]
+- V: [-1.2759334  0.2367579  0.1513335  1.2011317  1.1112863]
+- S: []
+- T: []
+- tau: []
+
+Beta Comparison Metrics:
+--------------------
+Method       Beta MSE     Beta MAE    
+------------------------------------
+AutoLoss     0.031764     0.133501    
+MSE Regression 0.002579     0.043915    
+MAE Regression 0.001320     0.029367    
+
+Training Data Evaluation:
+------------------------
+Method       MSE          MAE         
+------------------------------------
+AutoLoss     1.963392     1.082012    
+MSE Regression 1.816139     1.008977    
+MAE Regression 1.822942     1.006253    
+
+Validation Data Evaluation:
+--------------------------
+Method       MSE          MAE         
+------------------------------------
+AutoLoss     2.248908     1.106671    
+MSE Regression 2.083982     1.048362    
+MAE Regression 2.063234     1.040409    
+
+Training History:
+----------------
+Validation Loss Overview (flattened): 20 iterations
+1:2.440244  2:2.404233  3:2.397060  4:2.385832  5:2.381127
+6:2.379552  7:2.373479  8:2.369329  9:2.373780  10:2.365339
+11:2.365781  12:2.364142  13:2.354742  14:2.351443  15:2.348846
+16:2.346789  17:2.345909  18:2.340978  19:2.334451  20:2.332563
+
+Detailed Validation Loss by Global Iteration:
+
+Global Iteration 1:
+  Hyper step 1: 2.440244
+  Hyper step 2: 2.404233
+  Hyper step 3: 2.397060
+  Hyper step 4: 2.385832
+  Hyper step 5: 2.381127
+  Hyper step 6: 2.379552
+  Hyper step 7: 2.373479
+  Hyper step 8: 2.369329
+  Hyper step 9: 2.373780
+  Hyper step 10: 2.365339
+  Hyper step 11: 2.365781
+  Hyper step 12: 2.364142
+  Hyper step 13: 2.354742
+  Hyper step 14: 2.351443
+  Hyper step 15: 2.348846
+  Hyper step 16: 2.346789
+  Hyper step 17: 2.345909
+  Hyper step 18: 2.340978
+  Hyper step 19: 2.334451
+  Hyper step 20: 2.332563

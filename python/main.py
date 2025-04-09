@@ -128,7 +128,7 @@ def main():
     if args.verbose:
         # 2. Calculate beta comparison metrics
         beta_reg_l2 = train_reg_l2(X_train, y_train)
-        beta_reg_l1 = train_reg_l1(X_train, y_train, lr=args.lr, max_iter=1000)
+        beta_reg_l1 = train_reg_l1(X_train, y_train)
         
         # 3. Print beta comparison table
         print("\n----- Beta Comparison -----")
