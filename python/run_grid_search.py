@@ -6,12 +6,12 @@ import torch
 distributions = ["laplace"]
 loss_types = ["mse"]
 L_values = [10]
-H_values = [0]
+H_values = [10]
 total_sizes = [1000]
 feat_dims = [5]
 train_ratio = 0.3
 val_ratio = 0.2
-global_updates_list = [10]
+global_updates_list = [20]
 hyper_iters_list = [1]
 
 # 任意固定参数

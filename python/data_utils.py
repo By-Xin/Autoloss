@@ -12,8 +12,8 @@ def generate_full_data(n, d, distribution='laplace', scale=1.0, seed=42, device=
       - y = X beta_true + eps
     """
     torch.manual_seed(seed)
-    beta_true = torch.rand(d, device=device) * 10.0
-    X = torch.randn(n, d, device=device)
+    beta_true = torch.randn(d, device=device) 
+    X = torch.randn(n, d, device=device) 
 
     if distribution.lower() == 'laplace':
         dist = Laplace(0.0, scale)

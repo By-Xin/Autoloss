@@ -59,7 +59,27 @@ def main():
     V = torch.randn(args.L, device=device, requires_grad=True)
     S = torch.randn(args.H, device=device, requires_grad=True)
     T = torch.randn(args.H, device=device, requires_grad=True)
-    tau = torch.ones(args.H, device=device, requires_grad=False)
+    #tau = torch.ones(args.H, device=device, requires_grad=False)
+    H = args.H
+
+    # 三个值的基准数量
+    base = H // 3
+    remainder = H % 3
+
+    # 分配多余的元素给前几个分组
+    counts = [base, base, base]
+    for i in range(remainder):
+        counts[i] += 1  # 分配剩下的1或2个
+
+    # 构造对应的张量
+    tau_values = torch.cat([
+        torch.zeros(counts[0], device=device),
+        torch.ones(counts[1], device=device),
+        torch.full((counts[2],), 10.0, device=device)
+    ])
+
+    # 如果不要求顺序，可以打乱
+    tau = tau_values[torch.randperm(H)]
 
     # 多轮外层更新
     all_val_losses = []
