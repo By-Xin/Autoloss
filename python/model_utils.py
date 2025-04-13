@@ -67,12 +67,13 @@ def build_qp_matrices(U, V, S, T, tau, X_train, y_train, lambda_reg):
             G[row_idx, d + L*n + H*n + h_*n + i] = -1.0
             h_val[row_idx] = 0.0
             row_idx += 1
-
+    
     # beta_j >= 0
     for j in range(d):
         G[row_idx, j] = -1.0
-        h_val[row_idx] = 0.0
+        h_val[row_idx] = 10000.0
         row_idx += 1
+    
 
     G = G.unsqueeze(0)
     h = h_val.unsqueeze(0)

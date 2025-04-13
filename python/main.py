@@ -59,7 +59,8 @@ def main():
     V = torch.randn(args.L, device=device, requires_grad=True)
     S = torch.randn(args.H, device=device, requires_grad=True)
     T = torch.randn(args.H, device=device, requires_grad=True)
-    #tau = torch.ones(args.H, device=device, requires_grad=False)
+    tau = torch.ones(args.H, device=device, requires_grad=False) 
+    """
     H = args.H
 
     # 三个值的基准数量
@@ -80,6 +81,7 @@ def main():
 
     # 如果不要求顺序，可以打乱
     tau = tau_values[torch.randperm(H)]
+    """
 
     # 多轮外层更新
     all_val_losses = []

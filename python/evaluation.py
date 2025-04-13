@@ -71,11 +71,11 @@ def train_reg_l1(X, y, lr=0.01, max_iter=1000, tol=1e-4, weight_decay=0.0):
     """
     # 确保输入在CUDA上并转换为float类型
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    X = X.to(device).float()
-    y = y.to(device).float()
+    X = X.to(device).double()
+    y = y.to(device).double()
     
     # 初始化回归系数
-    beta = torch.zeros(X.shape[1], device=device, requires_grad=True)
+    beta = torch.zeros(X.shape[1], device=device, requires_grad=True, dtype=torch.double)
     
     # 定义优化器
     optimizer = torch.optim.Adam([beta], lr=lr, weight_decay=weight_decay)

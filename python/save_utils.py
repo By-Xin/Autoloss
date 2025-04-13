@@ -41,6 +41,7 @@ def save_experiment_results(autoloss_result, args, beta_opt, U, V, S, T, tau, be
     
     base_filename = (
         f'D{dist_char}'
+        f'{timestamp}'
         f'M{getattr(args, "loss_type", "X")}'
         f'L{getattr(args, "L", 0)}'
         f'H{getattr(args, "H", 0)}'
@@ -50,7 +51,7 @@ def save_experiment_results(autoloss_result, args, beta_opt, U, V, S, T, tau, be
         f'VR{getattr(args, "val_ratio", 0)}'
         f'G{getattr(args, "num_global_updates", 0)}'
         f'H{getattr(args, "num_hyperparam_iterations", 0)}'
-        f'{timestamp}'
+        #f'{timestamp}'
     )
     
     # 更新结果字典

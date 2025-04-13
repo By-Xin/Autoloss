@@ -12,17 +12,20 @@ def generate_full_data(n, d, distribution='laplace', scale=1.0, seed=42, device=
       - y = X beta_true + eps
     """
     torch.manual_seed(seed)
-    beta_true = torch.randn(d, device=device) 
-    X = torch.randn(n, d, device=device) 
+    beta_true = torch.randn(d, device=device, dtype=torch.float64) 
+    #beta_true = torch.rand(d, device=device, dtype=torch.float64) * 10.0
+    X = torch.randn(n, d, device=device, dtype=torch.float64) 
 
     if distribution.lower() == 'laplace':
-        dist = Laplace(0.0, scale)
+        #dist = Laplace(0.0, scale)
+        dist = Laplace(torch.tensor(0.0, dtype=torch.float64), torch.tensor(scale, dtype=torch.float64))
     elif distribution.lower() == 'normal':
-        dist = Normal(0.0, scale)
+        #dist = Normal(0.0, scale)
+        dist = Normal(torch.tensor(0.0, dtype=torch.float64), torch.tensor(scale, dtype=torch.float64))
     else:
         raise ValueError(f"Unsupported distribution: {distribution}, must be 'laplace' or 'normal'")
 
-    eps = dist.sample((n,)).to(device)
+    eps = dist.sample((n,)).to(device).double()
     y = X @ beta_true + eps
     return X, y, beta_true
 
@@ -55,13 +58,13 @@ def train_val_sample(train_size, val_size, X, y, seed=42, device="cpu"):
     
     # 抽取训练集
     train_indices = indices[:train_size]
-    X_train = X[train_indices].clone().detach().to(device)
-    y_train = y[train_indices].clone().detach().to(device)
+    X_train = X[train_indices].clone().detach().to(device).double() 
+    y_train = y[train_indices].clone().detach().to(device).double() 
     
     # 从剩余数据中抽取验证集
     val_indices = indices[train_size:train_size + val_size]
-    X_val = X[val_indices].clone().detach().to(device)
-    y_val = y[val_indices].clone().detach().to(device)
+    X_val = X[val_indices].clone().detach().to(device).double()
+    y_val = y[val_indices].clone().detach().to(device).double()
     
     return X_train, y_train, X_val, y_val
 
@@ -82,14 +85,16 @@ def generate_test_data(num_test_sample, feature_dimension, beta_true,
     """
     torch.manual_seed(seed)
     if distribution.lower() == 'laplace':
-        dist = Laplace(0.0, scale)
+        #dist = Laplace(0.0, scale)
+        dist = Laplace(torch.tensor(0.0, dtype=torch.float64), torch.tensor(scale, dtype=torch.float64))
     elif distribution.lower() == 'normal':
-        dist = Normal(0.0, scale)
+        #dist = Normal(0.0, scale)
+        dist = Normal(torch.tensor(0.0, dtype=torch.float64), torch.tensor(scale, dtype=torch.float64))
     else:
         raise ValueError(f"Unsupported distribution: {distribution}, must be 'laplace' or 'normal'")
 
-    X_test = torch.randn(num_test_sample, feature_dimension, device=device)
-    eps = dist.sample((num_test_sample,)).to(device)
+    X_test = torch.randn(num_test_sample, feature_dimension, device=device, dtype=torch.float64)
+    eps = dist.sample((num_test_sample,)).to(device).double()
     y_test = X_test @ beta_true + eps
 
     return X_test, y_test

@@ -3,8 +3,8 @@ import itertools
 import subprocess
 import torch
 
-distributions = ["laplace"]
-loss_types = ["mse"]
+distributions = ["laplace","normal"]
+loss_types = ["mse","mae"]
 L_values = [10]
 H_values = [10]
 total_sizes = [1000]

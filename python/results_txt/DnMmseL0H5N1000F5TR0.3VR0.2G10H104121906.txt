@@ -1,0 +1,91 @@
+AutoLoss Experiment Results
+================04121906================
+
+Configuration:
+- Distribution: normal
+- Loss Type: mse
+- Optimizer: adam
+- Parameters: L=0, H=5
+- Samples: 1000 (train=N/A)
+- Features: 5
+- Updates: 10 global, 1 hyper
+
+Model Parameters:
+----------------
+- Final Beta: [1.67360617e+00 6.80752579e-21 1.69309311e-20 2.74935730e-21
+ 4.62780749e-01]
+- U: []
+- V: []
+- S: [-0.51913047  1.2190347   0.6199683  -0.9143093   0.563756  ]
+- T: [-0.693307   -1.8746569  -0.8894634  -1.6579516  -0.43819427]
+- tau: [10. 10. 10. 10. 10.]
+
+Beta Comparison Metrics:
+--------------------
+Method       Beta MSE     Beta MAE    
+------------------------------------
+AutoLoss     1.209539     0.931201    
+MSE Regression 0.232010     0.410950    
+MAE Regression 0.305423     0.397846    
+
+Training Data Evaluation:
+------------------------
+Method       MSE          MAE         
+------------------------------------
+AutoLoss     106.258516   8.125416    
+MSE Regression 101.452627   7.922999    
+MAE Regression 103.270131   7.993507    
+
+Validation Data Evaluation:
+--------------------------
+Method       MSE          MAE         
+------------------------------------
+AutoLoss     97.141537    7.943107    
+MSE Regression 95.340960    7.966427    
+MAE Regression 92.872074    7.773557    
+
+Test Data Evaluation:
+--------------------
+Method       MSE          MAE         
+------------------------------------
+AutoLoss     95.651726    7.711579    
+MSE Regression 93.468644    7.710123    
+MAE Regression 91.251678    7.572330    
+
+Training History:
+----------------
+Validation Loss Overview (flattened): 10 iterations
+1:102.058679  2:83.250431  3:96.038733  4:119.817578  5:106.036733
+6:102.077284  7:97.578398  8:104.093266  9:95.708950  10:97.141537
+
+Detailed Validation Loss by Global Iteration:
+
+Global Iteration 1:
+  Hyper step 1: 102.058679
+
+Global Iteration 2:
+  Hyper step 1: 83.250431
+
+Global Iteration 3:
+  Hyper step 1: 96.038733
+
+Global Iteration 4:
+  Hyper step 1: 119.817578
+
+Global Iteration 5:
+  Hyper step 1: 106.036733
+
+Global Iteration 6:
+  Hyper step 1: 102.077284
+
+Global Iteration 7:
+  Hyper step 1: 97.578398
+
+Global Iteration 8:
+  Hyper step 1: 104.093266
+
+Global Iteration 9:
+  Hyper step 1: 95.708950
+
+Global Iteration 10:
+  Hyper step 1: 97.141537
