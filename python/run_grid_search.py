@@ -3,21 +3,21 @@ import itertools
 import subprocess
 import torch
 
-distributions = ["laplace","normal"]
-loss_types = ["mse","mae"]
-L_values = [10]
-H_values = [10]
+distributions = ["t"]
+loss_types = ["mse"]
+L_values = [5]
+H_values = [0]
 total_sizes = [1000]
-feat_dims = [5]
+feat_dims = [20]
 train_ratio = 0.3
 val_ratio = 0.2
-global_updates_list = [20]
+global_updates_list = [10]
 hyper_iters_list = [1]
 
 # 任意固定参数
-lambda_reg = 0.1
-lr = 1e-2
-scale = 10.0
+lambda_reg = 0.01
+lr = 0.1
+scale = 1.3
 seed = 42
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 

@@ -29,6 +29,7 @@ def compute_outer_loss(X_train, y_train,
 
 def train_hyperparams(X_train, y_train,
                       X_val, y_val,
+                      X_val2, y_val2,
                       U, V, S, T, tau,
                       lambda_reg,
                       optimizer,  # 现在接收外部传入的优化器
@@ -47,10 +48,18 @@ def train_hyperparams(X_train, y_train,
                                            U, V, S, T, tau,
                                            lambda_reg,
                                            loss_type)
+        
         loss_outer.backward()
         optimizer.step()
 
-        loss_val = loss_outer.item()
+        loss_val2,_= compute_outer_loss(X_train, y_train,
+                                           X_val2, y_val2,
+                                           U, V, S, T, tau,
+                                           lambda_reg,
+                                           loss_type)
+
+        loss_val = loss_val2.item()
+        #loss_val = loss_outer.item()
         loss_outer_history.append(loss_val)
         progress_bar.set_postfix(val_loss=f"{loss_val:.6f}")
 

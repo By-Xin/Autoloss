@@ -30,7 +30,7 @@ def main():
     parser.add_argument("--train_ratio", type=float, default=0.75, help="Proportion of data used for training")
     parser.add_argument("--val_ratio", type=float, default=0.25, help="Proportion of data used for validation")
     parser.add_argument("--seed", type=int, default=42, help="Random seed")
-    parser.add_argument("--distribution", type=str, default='normal', choices=['normal','laplace'], help="Noise distribution")
+    parser.add_argument("--distribution", type=str, default='normal', choices=['normal','laplace','t'], help="Noise distribution")
     parser.add_argument("--scale", type=float, default=1.0, help="Scale param for noise distribution")
     parser.add_argument("--loss_type", type=str, default="mae", choices=['mse','mae'], help="Outer loss type")
     parser.add_argument("--optimizer_choice", type=str, default="adam", choices=['adam','sgd','adamw'], help="Which optimizer to use")
@@ -55,11 +55,28 @@ def main():
                                          device=device)
 
     # 3) 初始化超参数
-    U = torch.randn(args.L, device=device, requires_grad=True)
-    V = torch.randn(args.L, device=device, requires_grad=True)
-    S = torch.randn(args.H, device=device, requires_grad=True)
+    
+    U = torch.randn(args.L, device=device, requires_grad=True) 
+    V = torch.randn(args.L, device=device, requires_grad=True) 
+    S = torch.randn(args.H, device=device, requires_grad=True) 
     T = torch.randn(args.H, device=device, requires_grad=True)
     tau = torch.ones(args.H, device=device, requires_grad=False) 
+    """
+    U = torch.ones(args.L, device=device) * (-1.0)
+    U.requires_grad_()
+
+    V = torch.ones(args.L, device=device) * (10.0)
+    V.requires_grad_()
+
+    S = torch.ones(args.H, device=device) * (-1.0)
+    S.requires_grad_()
+
+    T = torch.ones(args.H, device=device) * 20.0
+    T.requires_grad_()
+
+    tau = torch.ones(args.H, device=device, requires_grad=False) 
+    """
+    
     """
     H = args.H
 
@@ -95,40 +112,165 @@ def main():
         optimizer = torch.optim.AdamW([U, V, S, T], lr=args.lr)
     else:
         raise ValueError(f"不支持的优化器选择: {args.optimizer_choice}.")
+    
+    
+    #Version1: 原本
+    # 计算训练集和验证集的实际样本数量
+    train_size = int(args.total_sample_size * args.train_ratio)
+    val_size = int(args.total_sample_size * args.val_ratio)
+                
+    # 确保样本总数不超过总体样本量
+    if train_size + val_size > args.total_sample_size:
+        val_size = args.total_sample_size - train_size
+
+    _,_, X_val2, y_val2 = train_val_sample(
+        X=X, y=y,
+        train_size=0,
+        val_size=500,
+        seed=args.seed-10,
+        device=device
+    )
 
     for it in range(args.num_global_updates):
         if args.verbose:
             print(f"\nGlobal iteration {it+1}/{args.num_global_updates} ...")
-
-        # 计算训练集和验证集的实际样本数量
-        train_size = int(args.total_sample_size * args.train_ratio)
-        val_size = int(args.total_sample_size * args.val_ratio)
         
-        # 确保样本总数不超过总体样本量
-        if train_size + val_size > args.total_sample_size:
-            val_size = args.total_sample_size - train_size
-
         # 1) 生成训练和验证数据
         X_train, y_train, X_val, y_val = train_val_sample(  
             X=X, y=y,
             train_size=train_size,
             val_size=val_size,
-            seed=args.seed + it,
+            seed=args.seed+it,
             device=device
         )
 
-        U, V, S, T, val_loss_hist, beta_autoloss = train_hyperparams(
+
+        U, V, S, T, val_loss_hist, beta_autoloss= train_hyperparams(
             X_train, y_train,
             X_val, y_val,
+            X_val2, y_val2,
             U, V, S, T, tau,
             lambda_reg=args.lambda_reg,
             optimizer=optimizer,  # 传递优化器而不是创建新的
             num_hyperparam_iterations=args.num_hyperparam_iterations,
             loss_type=args.loss_type
         )
-        
+          
         all_val_losses.append(val_loss_hist)
 
+    
+    """
+    #Version2: 类似SGD
+    num_epochs = 3
+
+    for epoch in range(num_epochs):
+        print(f"\n====================== Epoch {epoch + 1} / {num_epochs} ======================")
+
+        # Step 1: 将 full data 分成两个 mini-batch
+        perm = torch.randperm(args.total_sample_size)
+        X = X[perm]
+        y = y[perm]
+        half = args.total_sample_size // 2
+
+        X_batches = [X[:half], X[half:]]
+        y_batches = [y[:half], y[half:]]
+
+        for batch_id, (X_batch, y_batch) in enumerate(zip(X_batches, y_batches)):
+            print(f"\n=== Start Bilevel Optimization for Mini-batch {batch_id+1} ===")
+            # 每个 mini-batch 内部划分 train / val
+            train_size = int(X_batch.shape[0] * args.train_ratio)
+            val_size = int(X_batch.shape[0] * args.val_ratio)
+            if train_size + val_size > X_batch.shape[0]:
+                val_size = X_batch.shape[0] - train_size
+
+            X_train, y_train, X_val, y_val = train_val_sample(  
+                X=X_batch, y=y_batch,
+                train_size=train_size,
+                val_size=val_size,
+                seed=args.seed,
+                device=device
+            )
+            for it in range(args.num_global_updates):
+                if args.verbose:
+                    print(f"\nGlobal iteration {it+1}/{args.num_global_updates} ...")
+                
+                # 计算训练集和验证集的实际样本数量
+                train_size = int(args.total_sample_size * args.train_ratio)
+                val_size = int(args.total_sample_size * args.val_ratio)
+                
+                # 确保样本总数不超过总体样本量
+                if train_size + val_size > args.total_sample_size:
+                    val_size = args.total_sample_size - train_size
+
+                # 1) 生成训练和验证数据
+                X_train, y_train, X_val, y_val = train_val_sample(  
+                    X=X, y=y,
+                    train_size=train_size,
+                    val_size=val_size,
+                    seed=args.seed + it,
+                    device=device
+                )
+
+                
+
+                U, V, S, T, val_loss_hist, beta_autoloss = train_hyperparams(
+                    X_train, y_train,
+                    X_val, y_val,
+                    U, V, S, T, tau,
+                    lambda_reg=args.lambda_reg,
+                    optimizer=optimizer,  # 传递优化器而不是创建新的
+                    num_hyperparam_iterations=args.num_hyperparam_iterations,
+                    loss_type=args.loss_type
+                )
+                
+                all_val_losses.append(val_loss_hist)
+    """
+    """
+    #Version3: 类似作弊
+    # 计算训练集和验证集的实际样本数量
+    train_size = int(args.total_sample_size * args.train_ratio)
+    val_size = int(args.total_sample_size * args.val_ratio)
+                
+    # 确保样本总数不超过总体样本量
+    #if train_size + val_size > args.total_sample_size:
+    #    val_size = args.total_sample_size - train_size
+
+    _,_, X_val2, y_val2 = train_val_sample(
+        X=X, y=y,
+        train_size=train_size,
+        val_size=val_size,
+        seed=args.seed,
+        device=device
+    )
+    X_val, y_val = X, y
+
+    for it in range(args.num_global_updates):
+        if args.verbose:
+            print(f"\nGlobal iteration {it+1}/{args.num_global_updates} ...")
+        
+        #loss_best = 100000.0
+        # 1) 生成训练和验证数据
+        X_train, y_train, _ , _ = train_val_sample(  
+            X=X, y=y,
+            train_size=train_size,
+            val_size=val_size,
+            seed=args.seed,
+            device=device
+        )
+
+        U, V, S, T, val_loss_hist, beta_autoloss, _ = train_hyperparams(
+            X_train, y_train,
+            X_val, y_val,
+            X_val2, y_val2,
+            U, V, S, T, tau,
+            lambda_reg=args.lambda_reg,
+            optimizer=optimizer,  # 传递优化器而不是创建新的
+            num_hyperparam_iterations=args.num_hyperparam_iterations,
+            loss_type=args.loss_type
+        )
+         
+        all_val_losses.append(val_loss_hist)
+    """
     # 打包结果
     autoloss_result = {
         "U": U.detach().clone(),
@@ -149,9 +291,11 @@ def main():
     # 评估
     if args.verbose:
         # 2. Calculate beta comparison metrics
-        beta_reg_l2 = train_reg_l2(X_train, y_train)
-        beta_reg_l1 = train_reg_l1(X_train, y_train, lr=args.lr, max_iter=1000, tol=1e-4, weight_decay=0.0)
-        
+        #beta_reg_l2 = train_reg_l2(X_train, y_train)
+        #beta_reg_l1 = train_reg_l1(X_train, y_train, lr=args.lr, max_iter=1000, tol=1e-4, weight_decay=0.0)
+        beta_reg_l2 = train_reg_l2(X, y)
+        beta_reg_l1 = train_reg_l1(X, y, lr=args.lr, max_iter=1000, tol=1e-4, weight_decay=0.0)
+
         # 3. Print beta comparison table
         print("\n----- Beta Comparison -----")
         print(f"{'Method':<12} {'Beta MSE':<12} {'Beta MAE':<12}")
@@ -201,7 +345,7 @@ def main():
             ("MAE Regression", beta_reg_l1)
         ]:
             # 计算并打印验证集评估指标
-            mse, mae = calc_pred_metrics(X_val, y_val, beta)
+            mse, mae = calc_pred_metrics(X_val2, y_val2, beta)
             print(f"{name:<12} {mse:<12.6f} {mae:<12.6f}")
             
             # 保存到字典
@@ -213,12 +357,12 @@ def main():
         print("-" * 36)
         # 生成测试数据
         X_test, y_test= generate_test_data(
-            num_test_sample=500,
+            num_test_sample=1000,
             feature_dimension=args.feature_dimension,
             beta_true=beta_true,
             distribution=args.distribution,
             scale=args.scale,
-            seed=args.seed + 1000,
+            seed=args.seed,
             device=device
         )
         for name, beta in [

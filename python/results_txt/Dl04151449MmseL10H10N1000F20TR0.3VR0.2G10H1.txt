@@ -1,0 +1,97 @@
+AutoLoss Experiment Results
+================04151449================
+
+Configuration:
+- Distribution: laplace
+- Loss Type: mse
+- Optimizer: adam
+- Parameters: L=10, H=10
+- Samples: 1000 (train=N/A)
+- Features: 20
+- Updates: 10 global, 1 hyper
+
+Model Parameters:
+----------------
+- Final Beta: [-2.78880986 -6.92012557 -1.20214389 -7.4433444   2.06192947 -4.14624575
+  4.54904969  3.89731028  2.62869981 -6.18317272 -2.33912851 -1.4296573
+ -0.12095034 -5.75392694  7.14545532  0.24610185 -1.48840377  2.59493524
+ -2.77487592  4.33704997]
+- U: [-0.5707904   1.2017988   0.62444866 -0.96953374  0.5162289  -0.37325227
+  0.00998571 -0.8145865  -1.4328878  -0.0934711 ]
+- V: [-0.696473   -1.8043493  -0.84406644 -1.6355112  -0.4635612   0.9897352
+  0.6874469   0.05515245  0.5401624   2.2547548 ]
+- S: [-1.3332299  -0.0856469  -0.16208054  1.3829076  -0.53202343  1.1094706
+  0.24096464  0.45781815 -0.62648576  1.816523  ]
+- T: [ 1.4481661  -0.26580837  0.76482874  1.5726237  -1.655321    0.04301988
+ -1.15685    -1.2097976  -1.7092656  -0.2706379 ]
+- tau: [1. 1. 1. 1. 1. 1. 1. 1. 1. 1.]
+
+Beta Comparison Metrics:
+--------------------
+Method       Beta MSE     Beta MAE    
+------------------------------------
+AutoLoss     14.165649    3.238291    
+MSE Regression 4.274626     1.635039    
+MAE Regression 2.912061     1.371881    
+
+Training Data Evaluation:
+------------------------
+Method       MSE          MAE         
+------------------------------------
+AutoLoss     4973.356000  48.772112   
+MSE Regression 5128.225486  50.353775   
+MAE Regression 5185.010866  50.396300   
+
+Validation Data Evaluation:
+--------------------------
+Method       MSE          MAE         
+------------------------------------
+AutoLoss     4861.008650  49.364415   
+MSE Regression 4613.608196  46.698890   
+MAE Regression 4591.007679  46.164599   
+
+Test Data Evaluation:
+--------------------
+Method       MSE          MAE         
+------------------------------------
+AutoLoss     4943.715338  51.811806   
+MSE Regression 4746.258806  49.960539   
+MAE Regression 4709.309251  49.825438   
+
+Training History:
+----------------
+Validation Loss Overview (flattened): 10 iterations
+1:4694.140319  2:4570.473994  3:4752.245874  4:5005.488673  5:4765.969065
+6:4692.504238  7:4734.772959  8:4573.922120  9:4773.171469  10:4894.127969
+
+Detailed Validation Loss by Global Iteration:
+
+Global Iteration 1:
+  Hyper step 1: 4694.140319
+
+Global Iteration 2:
+  Hyper step 1: 4570.473994
+
+Global Iteration 3:
+  Hyper step 1: 4752.245874
+
+Global Iteration 4:
+  Hyper step 1: 5005.488673
+
+Global Iteration 5:
+  Hyper step 1: 4765.969065
+
+Global Iteration 6:
+  Hyper step 1: 4692.504238
+
+Global Iteration 7:
+  Hyper step 1: 4734.772959
+
+Global Iteration 8:
+  Hyper step 1: 4573.922120
+
+Global Iteration 9:
+  Hyper step 1: 4773.171469
+
+Global Iteration 10:
+  Hyper step 1: 4894.127969

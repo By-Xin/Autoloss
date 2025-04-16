@@ -1,7 +1,7 @@
 # data_utils.py
 
 import torch
-from torch.distributions import Laplace, Normal
+from torch.distributions import Laplace, Normal, StudentT
 
 def generate_full_data(n, d, distribution='laplace', scale=1.0, seed=42, device="cpu"):
     """
@@ -22,8 +22,10 @@ def generate_full_data(n, d, distribution='laplace', scale=1.0, seed=42, device=
     elif distribution.lower() == 'normal':
         #dist = Normal(0.0, scale)
         dist = Normal(torch.tensor(0.0, dtype=torch.float64), torch.tensor(scale, dtype=torch.float64))
+    elif distribution.lower() == 't':
+        dist =StudentT(df=torch.tensor(scale, dtype=torch.float64))
     else:
-        raise ValueError(f"Unsupported distribution: {distribution}, must be 'laplace' or 'normal'")
+        raise ValueError(f"Unsupported distribution: {distribution}, must be 'laplace' or 'normal' or 't'")
 
     eps = dist.sample((n,)).to(device).double()
     y = X @ beta_true + eps
@@ -48,9 +50,9 @@ def train_val_sample(train_size, val_size, X, y, seed=42, device="cpu"):
     torch.manual_seed(seed)
     n = X.shape[0]
 
-    # 确保 train_size + val_size <= n
+     #确保 train_size + val_size <= n
     if train_size + val_size > n:
-        raise ValueError("train_size + val_size must be less than or equal to total number of samples.")
+       raise ValueError("train_size + val_size must be less than or equal to total number of samples.")
     
 
     # 生成随机排列的索引
@@ -90,8 +92,10 @@ def generate_test_data(num_test_sample, feature_dimension, beta_true,
     elif distribution.lower() == 'normal':
         #dist = Normal(0.0, scale)
         dist = Normal(torch.tensor(0.0, dtype=torch.float64), torch.tensor(scale, dtype=torch.float64))
+    elif distribution.lower() == 't':
+        dist =StudentT(df=torch.tensor(scale, dtype=torch.float64))
     else:
-        raise ValueError(f"Unsupported distribution: {distribution}, must be 'laplace' or 'normal'")
+        raise ValueError(f"Unsupported distribution: {distribution}, must be 'laplace' or 'normal' or 't'")
 
     X_test = torch.randn(num_test_sample, feature_dimension, device=device, dtype=torch.float64)
     eps = dist.sample((num_test_sample,)).to(device).double()
