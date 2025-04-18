@@ -3,7 +3,20 @@
 import torch
 import matplotlib.pyplot as plt
 import datetime  # Add this import for timestamp
+import os
+import re
+from datetime import datetime
+import numpy as np
 
+# 尝试导入imageio，如果不存在则提供安装提示
+try:
+    import imageio
+    from PIL import Image
+    HAS_IMAGEIO = True
+except ImportError:
+    HAS_IMAGEIO = False
+    print("警告: imageio或PIL库未安装，无法生成GIF动画。")
+    print("请安装所需库: pip install imageio pillow numpy")
 
 
 def reHU_piecewise(x, gamma):
@@ -198,45 +211,10 @@ def plot_theoretical_autoloss(params, r_min=-10, r_max=10, num_points=200,
     return filepath
 
 
-# def plot_theoretical_autoloss(params, r_min=-10, r_max=10, num_points=200):
-#     """
-#     绘制单点 Autoloss 关于残差 r 的分段曲线
-#     """
-#     U = params["U"]
-#     V = params["V"]
-#     S = params["S"]
-#     T = params["T"]
-#     tau = params["tau"]  # 需要在 params 中包含 tau
-#     device = U.device
-
-#     r_vals = torch.linspace(r_min, r_max, steps=num_points, device=device)
-#     L_vals = single_autoloss(r_vals, U, V, S, T, tau)
-
-#     plt.figure(figsize=(8,5))
-#     plt.plot(r_vals.cpu().numpy(), L_vals.cpu().numpy(), label="Single Autoloss")
-#     plt.axhline(y=0, color='k', linestyle='--', alpha=0.3)
-#     plt.axvline(x=0, color='k', linestyle='--', alpha=0.3)
-#     plt.xlabel("Residual r")
-#     plt.ylabel("Autoloss(r)")
-#     plt.title("Theoretical Autoloss")
-#     plt.grid(True)
-#     plt.legend()
-#     # plt.show()
-    
-#     # Generate filename with parameters and timestamp
-#     timestamp = datetime.datetime.now().strftime("%m%d_%H%M%S")
-#     param_info = f"L{U}_H{S}"
-#     #filename = f"TheoryLoss_{param_info}_{timestamp}.png"
-#     filename = f"TheoryLoss_{timestamp}.png"
-    
-#     # Save the figure
-#     plt.savefig(filename)
-#     print(f"Plot saved as: {filename}")
-
 def plot_combined_visualization(params, r_min=-10, r_max=10, num_points=200, 
                                global_iter=None, hyper_iter=None, output_dir="theory_loss_plots"):
     """
-    将超参数热图和理论损失曲线合并到一个图中
+    将超参数热图和理论损失曲线合并到一个图中，以GitHub贡献日历风格展示所有参数
     
     Args:
         params: 包含U, V, S, T, tau的字典
@@ -261,8 +239,8 @@ def plot_combined_visualization(params, r_min=-10, r_max=10, num_points=200,
     # 创建输出目录(如果不存在)
     os.makedirs(output_dir, exist_ok=True)
     
-    # 创建一个大的图形，包含5个子图(1个用于损失曲线，4个用于超参数)
-    fig = plt.figure(figsize=(15, 10))
+    # 创建画布，分为上下两部分
+    fig = plt.figure(figsize=(12, 10))
     
     # 添加标题
     if global_iter is not None and hyper_iter is not None:
@@ -271,8 +249,8 @@ def plot_combined_visualization(params, r_min=-10, r_max=10, num_points=200,
         title = "AutoLoss Visualization"
     fig.suptitle(title, fontsize=16)
     
-    # 1. 绘制理论损失曲线 (占据上方区域，跨越所有列)
-    ax1 = plt.subplot2grid((2, 2), (0, 0), colspan=2)
+    # 1. 绘制理论损失曲线 (占据上方70%区域)
+    ax1 = plt.subplot2grid((5, 1), (0, 0), rowspan=3)
     r_vals = torch.linspace(r_min, r_max, steps=num_points, device=device)
     L_vals = single_autoloss(r_vals, U, V, S, T, tau)
     ax1.plot(r_vals.cpu().numpy(), L_vals.cpu().numpy(), 'b-', linewidth=2)
@@ -283,6 +261,9 @@ def plot_combined_visualization(params, r_min=-10, r_max=10, num_points=200,
     ax1.set_title("Theoretical AutoLoss Function")
     ax1.grid(True)
     
+    # 2. 创建所有参数的GitHub风格热图 (占据下方30%区域)
+    ax2 = plt.subplot2grid((5, 1), (3, 0), rowspan=2)
+    
     # 获取所有参数的最大和最小值，用于一致的颜色映射
     all_values = np.concatenate([
         U.cpu().detach().numpy(), 
@@ -292,52 +273,203 @@ def plot_combined_visualization(params, r_min=-10, r_max=10, num_points=200,
     ])
     vmin, vmax = np.min(all_values), np.max(all_values)
     
-    # 2. 绘制U热图
-    ax2 = plt.subplot2grid((2, 2), (1, 0))
-    u_data = U.cpu().detach().numpy().reshape(-1, 1)
-    im2 = ax2.imshow(u_data, cmap='viridis', aspect='auto', vmin=vmin, vmax=vmax)
-    ax2.set_title(f"U Parameters (size={len(U)})")
-    ax2.set_xlabel("Dimension")
-    ax2.set_ylabel("Parameter Index")
+    # 转换参数为numpy数组
+    u_data = U.cpu().detach().numpy()
+    v_data = V.cpu().detach().numpy()
+    s_data = S.cpu().detach().numpy()
+    t_data = T.cpu().detach().numpy()
     
-    # 3. 绘制V热图
-    ax3 = plt.subplot2grid((2, 2), (1, 1))
-    v_data = V.cpu().detach().numpy().reshape(-1, 1)
-    im3 = ax3.imshow(v_data, cmap='viridis', aspect='auto', vmin=vmin, vmax=vmax)
-    ax3.set_title(f"V Parameters (size={len(V)})")
-    ax3.set_xlabel("Dimension")
+    # 参数长度，用于确定热图宽度
+    max_len = max(len(u_data), len(v_data), len(s_data), len(t_data))
     
-    # 添加S和T参数的文本描述（如果存在）
-    if len(S) > 0:
-        s_text = f"S Parameters: {S.cpu().detach().numpy()}"
-        t_text = f"T Parameters: {T.cpu().detach().numpy()}"
-        plt.figtext(0.5, 0.02, s_text + "\n" + t_text, ha="center", fontsize=10, 
-                  bbox={"facecolor":"orange", "alpha":0.1, "pad":5})
+    # 创建统一的二维数组，行代表不同的参数组，列代表参数索引
+    # 对于长度不足的参数组，用NaN填充
+    param_array = np.full((4, max_len), np.nan)
+    param_array[0, :len(u_data)] = u_data
+    param_array[1, :len(v_data)] = v_data
+    param_array[2, :len(s_data)] = s_data
+    param_array[3, :len(t_data)] = t_data
+    
+    # 创建热图
+    im = ax2.imshow(param_array, aspect='auto', cmap='viridis', vmin=vmin, vmax=vmax)
     
     # 添加颜色条
-    cbar = fig.colorbar(im2, ax=[ax2, ax3])
+    cbar = plt.colorbar(im, ax=ax2)
     cbar.set_label('Parameter Value')
     
-    plt.tight_layout(rect=[0, 0.03, 1, 0.95])  # 调整布局以适应文本
+    # 设置y轴标签为参数组名称
+    ax2.set_yticks(np.arange(4))
+    ax2.set_yticklabels(['U', 'V', 'S', 'T'])
     
-    # 生成文件名
+    # X轴标签（参数索引）
+    if max_len <= 10:  # 当参数不多时显示所有索引
+        ax2.set_xticks(np.arange(max_len))
+        ax2.set_xticklabels(np.arange(max_len))
+    else:  # 参数过多时只显示部分索引
+        step = max(1, max_len // 10)
+        ax2.set_xticks(np.arange(0, max_len, step))
+        ax2.set_xticklabels(np.arange(0, max_len, step))
+    
+    ax2.set_xlabel("Parameter Index")
+    ax2.set_title("Parameters Visualization (GitHub-style)")
+    
+    # 在每个单元格中绘制网格线
+    for i in range(1, 4):
+        ax2.axhline(y=i-0.5, color='white', linestyle='-', linewidth=0.5)
+    
+    for j in range(1, max_len):
+        ax2.axvline(x=j-0.5, color='white', linestyle='-', linewidth=0.5)
+    
+    # 为NaN值区域绘制灰色背景
+    for i in range(4):
+        for j in range(max_len):
+            if np.isnan(param_array[i, j]):
+                ax2.add_patch(plt.Rectangle((j-0.5, i-0.5), 1, 1, fill=True, color='lightgrey'))
+    
+    plt.tight_layout(rect=[0, 0, 1, 0.95])  # 调整布局以适应标题
     timestamp = datetime.now().strftime("%Y%m%d")
-    
-    # 将全局迭代和超参数迭代信息添加到文件名
+
+    # 构建迭代信息部分
     iter_info = ""
     if global_iter is not None:
-        iter_info += f"G{global_iter}"
-    if hyper_iter is not None:
-        iter_info += f"_H{hyper_iter}"
-    
+        iter_info += f"Global{global_iter}"
+        
+        # 对超参数迭代进行正确处理
+        if hyper_iter is not None:
+            iter_info += f"_Hyper{hyper_iter}"
+        else:
+            iter_info += "_Hyper0"  # 如果为None，使用Hyper0表示初始状态
+            
     # 包含参数大小信息
     param_info = f"_L{len(U)}_H{len(S)}"
-    
+
+    # 构建完整文件名
     filename = f"AutoLoss_{iter_info}{param_info}_{timestamp}.png"
+
     filepath = os.path.join(output_dir, filename)
-    
+        
     # 保存图像
     plt.savefig(filepath, dpi=300, bbox_inches='tight')
     plt.close()
     
     return filepath
+
+def create_gif_from_pngs(input_dir='.', output_gif='AutoLoss_Animation.gif', duration=1.5, pattern="AutoLoss_Global", loop=0):
+    """
+    将指定目录下的PNG图片合成为GIF动画
+    
+    参数:
+        input_dir: 包含PNG图片的目录
+        output_gif: 输出GIF文件的路径
+        duration: 每一帧的持续时间（秒），值越大动画越慢
+        pattern: 匹配文件名的模式
+        loop: 循环次数，0表示无限循环，1表示播放一次不循环，n表示循环n次
+    
+    返回:
+        bool: 是否成功创建GIF
+    """
+    if not HAS_IMAGEIO:
+        print("警告: imageio或PIL库未安装，无法生成GIF动画。")
+        print("请安装所需库: pip install imageio pillow numpy")
+        return False
+    
+    # 查找目录中所有符合pattern的PNG文件
+    png_files = [f for f in os.listdir(input_dir) if f.lower().endswith('.png') and pattern in f]
+    
+    if len(png_files) == 0:
+        print(f"在 {input_dir} 目录中没有找到匹配 '{pattern}' 的PNG文件")
+        return False
+    
+    # 自定义排序函数，按照Global和Hyper的数字顺序排序
+    def extract_numbers(filename):
+        # 从文件名中提取Global和Hyper的数字
+        global_match = re.search(r'Global(\d+)', filename)
+        hyper_match = re.search(r'Hyper(\d+)', filename)
+        
+        global_num = int(global_match.group(1)) if global_match else 0
+        hyper_num = int(hyper_match.group(1)) if hyper_match else 0
+        
+        return (global_num, hyper_num)
+    
+    # 根据Global和Hyper的数字顺序排序文件
+    png_files.sort(key=extract_numbers)
+    
+    # 打印排序后的文件列表（用于验证）
+    print("将按以下顺序处理图片：")
+    for i, f in enumerate(png_files):
+        global_num, hyper_num = extract_numbers(f)
+        print(f"{i+1}. {f} (Global: {global_num}, Hyper: {hyper_num})")
+    
+    # 读取所有图片
+    images = []
+    for png_file in png_files:
+        file_path = os.path.join(input_dir, png_file)
+        try:
+            img = Image.open(file_path)
+            # 确保所有图片都是RGB模式（而不是RGBA）
+            if img.mode == 'RGBA':
+                img = img.convert('RGB')
+            images.append(np.array(img))
+        except Exception as e:
+            print(f"无法处理文件 {png_file}: {e}")
+    
+    if len(images) == 0:
+        print("没有有效的图片可以处理")
+        return False
+    
+    # 创建GIF，设置循环参数和更长的帧持续时间
+    print(f"创建GIF动画，共 {len(images)} 帧，帧持续时间: {duration}秒，循环模式: {'无限循环' if loop == 0 else f'循环{loop}次'}")
+    imageio.mimsave(output_gif, images, duration=duration, loop=loop)
+    print(f"GIF动画已保存到: {output_gif}")
+    
+    # 输出文件大小信息
+    file_size = os.path.getsize(output_gif) / (1024 * 1024)  # 转换为MB
+    print(f"文件大小: {file_size:.2f} MB")
+    
+    return True
+
+def create_autoloss_animation(output_dir, num_global_updates=None, output_gif=None, duration=1.5, loop=0):
+    """
+    自动生成AutoLoss训练过程的GIF动画
+    
+    Args:
+        output_dir: 包含PNG图片的目录
+        num_global_updates: 全局更新次数（如果提供，用于生成更具体的文件名）
+        output_gif: 输出GIF文件的名称（如果为None，将自动生成）
+        duration: 每一帧的持续时间（秒），值越大动画越慢
+        loop: 循环次数，0表示无限循环，1表示播放一次不循环，n表示循环n次
+    
+    Returns:
+        str: 生成的GIF文件路径，或者None（如果失败）
+    """
+    if not HAS_IMAGEIO:
+        print("警告: 缺少必要的库，无法生成GIF动画。")
+        return None
+    
+    # 创建输出目录（如果不存在）
+    os.makedirs(output_dir, exist_ok=True)
+    
+    # 如果没有指定输出文件名，创建一个包含时间戳的名称
+    if output_gif is None:
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        if num_global_updates is not None:
+            output_gif = f"AutoLoss_G{num_global_updates}_Animation_{timestamp}.gif"
+        else:
+            output_gif = f"AutoLoss_Animation_{timestamp}.gif"
+    
+    # 完整路径
+    output_path = os.path.join(output_dir, output_gif)
+    
+    # 生成GIF动画
+    success = create_gif_from_pngs(
+        input_dir=output_dir,
+        output_gif=output_path,
+        duration=duration,
+        pattern="AutoLoss_Global",
+        loop=loop
+    )
+    
+    if success:
+        return output_path
+    else:
+        return None

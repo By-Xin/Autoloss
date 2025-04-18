@@ -5,14 +5,14 @@ import torch
 
 distributions = ["t"]
 loss_types = ["mse"]
-L_values = [5]
-H_values = [0]
+L_values = [2]
+H_values = [2]
 total_sizes = [1000]
 feat_dims = [20]
 train_ratio = 0.3
 val_ratio = 0.2
 global_updates_list = [10]
-hyper_iters_list = [1]
+hyper_iters_list = [2]
 
 # 任意固定参数
 lambda_reg = 0.01

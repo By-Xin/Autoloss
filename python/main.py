@@ -140,7 +140,7 @@ def main():
             r_max=10, 
             num_points=200,
             global_iter=it,
-            hyper_iter=None,  # 表示这是全局迭代后的汇总图
+            hyper_iter=0,  
             output_dir=output_dir
         )
 
@@ -278,21 +278,36 @@ def main():
         plt.close()
         
         print(f"Loss curve saved to: {filepath}")
-        
-        # 绘制最终的理论损失曲线（使用合并可视化）
-        plot_combined_visualization(
-            autoloss_result, 
-            r_min=-10, 
-            r_max=10, 
-            num_points=200, 
-            output_dir=output_dir
-        )
 
+    
+    
     pkl_path, txt_path = save_experiment_results(
         autoloss_result, args, beta_autoloss, 
         U, V, S, T, tau, beta_true, 
         all_val_losses, beta_metrics_dict, train_metrics_dict, val_metrics_dict, test_metrics_dict,
     )
+
+    try:
+        from theoretical_loss import create_autoloss_animation
+        
+        print("\n正在生成训练过程动画...")
+        gif_path = create_autoloss_animation(
+            output_dir=output_dir,
+            num_global_updates=args.num_global_updates,
+            duration=5,  # 每帧持续时间增加到1.5秒（更慢）
+            loop=0  # 设置为无限循环播放
+        )
+        
+        if gif_path:
+            print(f"动画已成功生成: {gif_path}")
+            print("已设置为慢速和无限循环播放模式")
+        else:
+            print("动画生成失败。请确保已安装必要的库: pip install imageio pillow numpy")
+    except ImportError as e:
+        print(f"无法导入GIF生成功能: {e}")
+        print("请确保theoretical_loss.py中包含create_autoloss_animation函数")
+    except Exception as e:
+        print(f"生成GIF动画时发生错误: {e}")
 
 if __name__ == "__main__":
     main()

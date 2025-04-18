@@ -1,0 +1,93 @@
+AutoLoss Experiment Results
+================04181940================
+
+Configuration:
+- Distribution: t
+- Loss Type: mse
+- Optimizer: adam
+- Parameters: L=2, H=2
+- Samples: 1000 (train=N/A)
+- Features: 20
+- Updates: 10 global, 1 hyper
+
+Model Parameters:
+----------------
+- Final Beta: [ 1.10192453 -2.02230773 -1.23983625 -0.53954326  0.73744816 -1.04480888
+ -0.9649806   0.40940227  0.81135586 -0.38991665  0.97520913 -0.32475796
+ -0.70736459 -1.69944839  0.31521119 -0.92772865  0.36900086 -1.80161581
+ -0.41436528  1.11785859]
+- U: [-0.9539315  1.4529971]
+- V: [-0.49684927 -1.6613032 ]
+- S: [-1.7690616 -0.5064589]
+- T: [ 0.9712609 -0.1318842]
+- tau: [1. 1.]
+
+Beta Comparison Metrics:
+--------------------
+Method       Beta MSE     Beta MAE    
+------------------------------------
+AutoLoss     0.014305     0.097706    
+MSE Regression 0.383299     0.499911    
+MAE Regression 0.002617     0.042477    
+
+Training Data Evaluation:
+------------------------
+Method       MSE          MAE         
+------------------------------------
+AutoLoss     15.683614    1.967126    
+MSE Regression 22.485997    3.108338    
+MAE Regression 16.099935    1.962359    
+
+Validation Data Evaluation:
+--------------------------
+Method       MSE          MAE         
+------------------------------------
+AutoLoss     67.913029    2.099997    
+MSE Regression 70.361297    3.095785    
+MAE Regression 67.639141    2.011101    
+
+Test Data Evaluation:
+--------------------
+Method       MSE          MAE         
+------------------------------------
+AutoLoss     309.062036   3.015683    
+MSE Regression 318.262547   4.099938    
+MAE Regression 308.830238   2.949600    
+
+Training History:
+----------------
+Validation Loss Overview (flattened): 10 iterations
+1:68.433786  2:67.683583  3:68.191473  4:67.929023  5:67.780140
+6:67.644865  7:68.112856  8:67.689637  9:68.265605  10:67.891187
+
+Detailed Validation Loss by Global Iteration:
+
+Global Iteration 1:
+  Hyper step 1: 68.433786
+
+Global Iteration 2:
+  Hyper step 1: 67.683583
+
+Global Iteration 3:
+  Hyper step 1: 68.191473
+
+Global Iteration 4:
+  Hyper step 1: 67.929023
+
+Global Iteration 5:
+  Hyper step 1: 67.780140
+
+Global Iteration 6:
+  Hyper step 1: 67.644865
+
+Global Iteration 7:
+  Hyper step 1: 68.112856
+
+Global Iteration 8:
+  Hyper step 1: 67.689637
+
+Global Iteration 9:
+  Hyper step 1: 68.265605
+
+Global Iteration 10:
+  Hyper step 1: 67.891187
