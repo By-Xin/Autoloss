@@ -12,7 +12,7 @@ from data_utils import generate_full_data, generate_test_data, train_val_sample
 from model_utils import solve_inner_qpth
 from training import train_hyperparams
 from evaluation import evaluate_and_print, compute_test_Xbeta, train_reg_l1, train_reg_l2, calc_beta_metrics, calc_pred_metrics
-from theoretical_loss import plot_theoretical_autoloss, plot_hyperparams_heatmap
+from theoretical_loss import plot_theoretical_autoloss, plot_combined_visualization
 from save_utils import save_experiment_results
 
 def main():
@@ -75,13 +75,11 @@ def main():
     else:
         raise ValueError(f"不支持的优化器选择: {args.optimizer_choice}.")
     
-    # 创建每次运行的唯一输出目录
+    # 创建每次运行的唯一输出目录（单一目录，不按全局迭代分隔）
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    base_output_dir = os.path.join(os.path.dirname(__file__), 'theory_loss_plots')
-    output_dir = os.path.join(base_output_dir, f"run_{timestamp}")
+    output_dir = os.path.join(os.path.dirname(__file__), 'theory_loss_plots', f"run_{timestamp}")
     os.makedirs(output_dir, exist_ok=True)
     
-    #Version1: 原本
     # 计算训练集和验证集的实际样本数量
     train_size = int(args.total_sample_size * args.train_ratio)
     val_size = int(args.total_sample_size * args.val_ratio)
@@ -110,10 +108,6 @@ def main():
             seed=args.seed+it,
             device=device
         )
-        
-        # 为此次全局迭代创建子目录
-        global_iter_dir = os.path.join(output_dir, f"global_iter_{it}")
-        os.makedirs(global_iter_dir, exist_ok=True)
 
         U, V, S, T, val_loss_hist, beta_autoloss = train_hyperparams(
             X_train, y_train,
@@ -124,13 +118,13 @@ def main():
             optimizer=optimizer,  # 传递优化器而不是创建新的
             num_hyperparam_iterations=args.num_hyperparam_iterations,
             loss_type=args.loss_type,
-            output_dir=global_iter_dir,  # 传递子目录
-            global_iter=it  # 传递全局迭代次数
+            output_dir=output_dir,  # 使用单一目录
+            global_iter=it
         )
           
         all_val_losses.append(val_loss_hist)
         
-        # 创建一个总结性的可视化
+        # 在全局迭代结束时生成总结可视化
         params = {
             "U": U.detach().clone(),
             "V": V.detach().clone(),
@@ -139,26 +133,15 @@ def main():
             "tau": tau
         }
         
-        # 绘制最终的理论损失曲线
-        plot_theoretical_autoloss(
+        # 绘制全局迭代总结图
+        plot_combined_visualization(
             params, 
             r_min=-10, 
             r_max=10, 
             num_points=200,
             global_iter=it,
             hyper_iter=None,  # 表示这是全局迭代后的汇总图
-            output_dir=global_iter_dir
-        )
-        
-        # 绘制最终的超参数热图
-        plot_hyperparams_heatmap(
-            U.detach().clone(),
-            V.detach().clone(),
-            S.detach().clone(),
-            T.detach().clone(),
-            global_iter=it,
-            hyper_iter=None,
-            output_dir=global_iter_dir
+            output_dir=output_dir
         )
 
     # 打包结果
@@ -296,8 +279,14 @@ def main():
         
         print(f"Loss curve saved to: {filepath}")
         
-        plot_theoretical_autoloss(autoloss_result, r_min=-10, r_max=10, num_points=200, 
-                              output_dir=output_dir)
+        # 绘制最终的理论损失曲线（使用合并可视化）
+        plot_combined_visualization(
+            autoloss_result, 
+            r_min=-10, 
+            r_max=10, 
+            num_points=200, 
+            output_dir=output_dir
+        )
 
     pkl_path, txt_path = save_experiment_results(
         autoloss_result, args, beta_autoloss, 

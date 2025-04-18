@@ -233,3 +233,111 @@ def plot_theoretical_autoloss(params, r_min=-10, r_max=10, num_points=200,
 #     plt.savefig(filename)
 #     print(f"Plot saved as: {filename}")
 
+def plot_combined_visualization(params, r_min=-10, r_max=10, num_points=200, 
+                               global_iter=None, hyper_iter=None, output_dir="theory_loss_plots"):
+    """
+    将超参数热图和理论损失曲线合并到一个图中
+    
+    Args:
+        params: 包含U, V, S, T, tau的字典
+        r_min, r_max: 残差范围
+        num_points: 绘图点数
+        global_iter: 外层迭代次数
+        hyper_iter: 内层超参数迭代次数
+        output_dir: 输出目录
+    """
+    import os
+    import matplotlib.pyplot as plt
+    import numpy as np
+    from datetime import datetime
+    
+    U = params["U"]
+    V = params["V"]
+    S = params["S"]
+    T = params["T"]
+    tau = params["tau"]
+    device = U.device
+    
+    # 创建输出目录(如果不存在)
+    os.makedirs(output_dir, exist_ok=True)
+    
+    # 创建一个大的图形，包含5个子图(1个用于损失曲线，4个用于超参数)
+    fig = plt.figure(figsize=(15, 10))
+    
+    # 添加标题
+    if global_iter is not None and hyper_iter is not None:
+        title = f"AutoLoss Visualization (Global Iter: {global_iter}, Hyper Iter: {hyper_iter})"
+    else:
+        title = "AutoLoss Visualization"
+    fig.suptitle(title, fontsize=16)
+    
+    # 1. 绘制理论损失曲线 (占据上方区域，跨越所有列)
+    ax1 = plt.subplot2grid((2, 2), (0, 0), colspan=2)
+    r_vals = torch.linspace(r_min, r_max, steps=num_points, device=device)
+    L_vals = single_autoloss(r_vals, U, V, S, T, tau)
+    ax1.plot(r_vals.cpu().numpy(), L_vals.cpu().numpy(), 'b-', linewidth=2)
+    ax1.axhline(y=0, color='k', linestyle='--', alpha=0.3)
+    ax1.axvline(x=0, color='k', linestyle='--', alpha=0.3)
+    ax1.set_xlabel("Residual r")
+    ax1.set_ylabel("Autoloss(r)")
+    ax1.set_title("Theoretical AutoLoss Function")
+    ax1.grid(True)
+    
+    # 获取所有参数的最大和最小值，用于一致的颜色映射
+    all_values = np.concatenate([
+        U.cpu().detach().numpy(), 
+        V.cpu().detach().numpy(),
+        S.cpu().detach().numpy(), 
+        T.cpu().detach().numpy()
+    ])
+    vmin, vmax = np.min(all_values), np.max(all_values)
+    
+    # 2. 绘制U热图
+    ax2 = plt.subplot2grid((2, 2), (1, 0))
+    u_data = U.cpu().detach().numpy().reshape(-1, 1)
+    im2 = ax2.imshow(u_data, cmap='viridis', aspect='auto', vmin=vmin, vmax=vmax)
+    ax2.set_title(f"U Parameters (size={len(U)})")
+    ax2.set_xlabel("Dimension")
+    ax2.set_ylabel("Parameter Index")
+    
+    # 3. 绘制V热图
+    ax3 = plt.subplot2grid((2, 2), (1, 1))
+    v_data = V.cpu().detach().numpy().reshape(-1, 1)
+    im3 = ax3.imshow(v_data, cmap='viridis', aspect='auto', vmin=vmin, vmax=vmax)
+    ax3.set_title(f"V Parameters (size={len(V)})")
+    ax3.set_xlabel("Dimension")
+    
+    # 添加S和T参数的文本描述（如果存在）
+    if len(S) > 0:
+        s_text = f"S Parameters: {S.cpu().detach().numpy()}"
+        t_text = f"T Parameters: {T.cpu().detach().numpy()}"
+        plt.figtext(0.5, 0.02, s_text + "\n" + t_text, ha="center", fontsize=10, 
+                  bbox={"facecolor":"orange", "alpha":0.1, "pad":5})
+    
+    # 添加颜色条
+    cbar = fig.colorbar(im2, ax=[ax2, ax3])
+    cbar.set_label('Parameter Value')
+    
+    plt.tight_layout(rect=[0, 0.03, 1, 0.95])  # 调整布局以适应文本
+    
+    # 生成文件名
+    timestamp = datetime.now().strftime("%Y%m%d")
+    
+    # 将全局迭代和超参数迭代信息添加到文件名
+    iter_info = ""
+    if global_iter is not None:
+        iter_info += f"G{global_iter}"
+    if hyper_iter is not None:
+        iter_info += f"_H{hyper_iter}"
+    
+    # 包含参数大小信息
+    param_info = f"_L{len(U)}_H{len(S)}"
+    
+    filename = f"AutoLoss_{iter_info}{param_info}_{timestamp}.png"
+    filepath = os.path.join(output_dir, filename)
+    
+    # 保存图像
+    plt.savefig(filepath, dpi=300, bbox_inches='tight')
+    plt.close()
+    
+    return filepath
