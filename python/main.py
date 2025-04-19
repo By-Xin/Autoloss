@@ -56,10 +56,11 @@ def main():
 
     # 3) 初始化超参数
     
-    U = torch.ones(args.L, device=device, requires_grad=True)*(-1.0)
-    V = torch.ones(args.L, device=device, requires_grad=True)*10.0
-    S = torch.ones(args.H, device=device, requires_grad=True)*(-1.0)
-    T = torch.ones(args.H, device=device, requires_grad=True)*20.0
+    U = torch.full((args.L,), -1.0, device=device, requires_grad=True)
+    V = torch.full((args.L,), 10.0, device=device, requires_grad=True)
+    S = torch.full((args.H,), -1.0, device=device, requires_grad=True)
+    T = torch.full((args.H,), 20.0, device=device, requires_grad=True)
+
     tau = torch.ones(args.H, device=device, requires_grad=False) 
 
     # 多轮外层更新
