@@ -56,10 +56,10 @@ def main():
 
     # 3) 初始化超参数
     
-    U = torch.randn(args.L, device=device, requires_grad=True) 
-    V = torch.randn(args.L, device=device, requires_grad=True) 
-    S = torch.randn(args.H, device=device, requires_grad=True) 
-    T = torch.randn(args.H, device=device, requires_grad=True)
+    U = torch.ones(args.L, device=device, requires_grad=True)*(-1.0)
+    V = torch.ones(args.L, device=device, requires_grad=True)*10.0
+    S = torch.ones(args.H, device=device, requires_grad=True)*(-1.0)
+    T = torch.ones(args.H, device=device, requires_grad=True)*20.0
     tau = torch.ones(args.H, device=device, requires_grad=False) 
 
     # 多轮外层更新
@@ -143,7 +143,7 @@ def main():
             hyper_iter=0,  
             output_dir=output_dir
         )
-    
+
     # 打包结果
     autoloss_result = {
         "U": U.detach().clone(),
