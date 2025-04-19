@@ -105,7 +105,7 @@ def main():
             X=X, y=y,
             train_size=train_size,
             val_size=val_size,
-            seed=args.seed+it,
+            seed=args.seed,
             device=device
         )
 
