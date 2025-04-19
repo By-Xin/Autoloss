@@ -1,0 +1,54 @@
+AutoLoss Experiment Results
+================04052033================
+
+Configuration:
+- Distribution: laplace
+- Loss Type: mse
+- Optimizer: adam
+- Parameters: L=5, H=0
+- Samples: 1000 (train=N/A)
+- Features: 5
+- Updates: 1 global, 1 hyper
+
+Model Parameters:
+----------------
+- Final Beta: [8.583252 9.01734  3.411487 8.967243 4.72426 ]
+- U: [-0.47191855 -0.11861908  0.37761018  0.11401688  1.1131432 ]
+- V: [-1.2274035   0.28806573  0.2637852   1.2569642   1.2636154 ]
+- S: []
+- T: []
+- tau: []
+
+Beta Comparison Metrics:
+--------------------
+Method       Beta MSE     Beta MAE    
+------------------------------------
+AutoLoss     0.262527     0.446977    
+L2 Reg       0.257875     0.439142    
+L1 Reg       0.131989     0.293664    
+
+Training Data Evaluation:
+------------------------
+Method       MSE          MAE         
+------------------------------------
+AutoLoss     182.283691   10.121700   
+MSE          181.613831   10.089764   
+MAE          182.294250   10.062531   
+
+Validation Data Evaluation:
+--------------------------
+Method       MSE          MAE         
+------------------------------------
+AutoLoss     208.300720   10.483589   
+MSE          208.398056   10.483620   
+MAE          206.323334   10.404093   
+
+Training History:
+----------------
+Validation Loss Overview (flattened): 1 iterations
+1:224.714447
+
+Detailed Validation Loss by Global Iteration:
+
+Global Iteration 1:
+  Hyper step 1: 224.714447

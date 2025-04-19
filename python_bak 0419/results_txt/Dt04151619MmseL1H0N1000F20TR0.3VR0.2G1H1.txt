@@ -1,0 +1,65 @@
+AutoLoss Experiment Results
+================04151619================
+
+Configuration:
+- Distribution: t
+- Loss Type: mse
+- Optimizer: adam
+- Parameters: L=1, H=0
+- Samples: 1000 (train=N/A)
+- Features: 20
+- Updates: 1 global, 1 hyper
+
+Model Parameters:
+----------------
+- Final Beta: [ 1.38665488 -1.83309224 -1.18286655 -0.79623958  0.69471815 -0.97680371
+ -1.1214444   0.55554235  0.8817542  -0.50805977  0.93755619 -0.32214005
+ -0.56761808 -1.84941513  0.15621046 -1.11763396  0.1431166  -1.99052765
+ -0.22141643  1.05072904]
+- U: [-0.52874863]
+- V: [-0.6873659]
+- S: []
+- T: []
+- tau: []
+
+Beta Comparison Metrics:
+--------------------
+Method       Beta MSE     Beta MAE    
+------------------------------------
+AutoLoss     0.028290     0.135509    
+MSE Regression 0.010515     0.084574    
+MAE Regression 0.001688     0.032723    
+
+Training Data Evaluation:
+------------------------
+Method       MSE          MAE         
+------------------------------------
+AutoLoss     8.996922     1.521962    
+MSE Regression 8.658964     1.460770    
+MAE Regression 8.767550     1.391149    
+
+Validation Data Evaluation:
+--------------------------
+Method       MSE          MAE         
+------------------------------------
+AutoLoss     7.977931     1.482353    
+MSE Regression 7.326544     1.362491    
+MAE Regression 7.326664     1.305697    
+
+Test Data Evaluation:
+--------------------
+Method       MSE          MAE         
+------------------------------------
+AutoLoss     5.741386     1.459332    
+MSE Regression 5.230462     1.350930    
+MAE Regression 5.242404     1.307411    
+
+Training History:
+----------------
+Validation Loss Overview (flattened): 1 iterations
+1:7.935800
+
+Detailed Validation Loss by Global Iteration:
+
+Global Iteration 1:
+  Hyper step 1: 7.935800

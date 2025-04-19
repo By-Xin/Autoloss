@@ -1,0 +1,105 @@
+AutoLoss Experiment Results
+================04182046================
+
+Configuration:
+- Distribution: t
+- Loss Type: mse
+- Optimizer: adam
+- Parameters: L=2, H=2
+- Samples: 1000 (train=N/A)
+- Features: 20
+- Updates: 10 global, 2 hyper
+
+Model Parameters:
+----------------
+- Final Beta: [ 1.05438657 -2.05100092 -1.25555548 -0.57160164  0.69395007 -0.99631241
+ -0.97052835  0.42479407  0.77389049 -0.39253281  0.91101976 -0.28359681
+ -0.71716677 -1.75905172  0.34849237 -0.9375779   0.38441448 -1.79051644
+ -0.40201654  1.08884317]
+- U: [-1.0212525  1.8868647]
+- V: [-0.5891544 -1.286447 ]
+- S: [-1.516463    0.17826323]
+- T: [ 0.471565  -0.7658314]
+- tau: [1. 1.]
+
+Beta Comparison Metrics:
+--------------------
+Method       Beta MSE     Beta MAE    
+------------------------------------
+AutoLoss     0.011177     0.087175    
+MSE Regression 0.383299     0.499911    
+MAE Regression 0.002617     0.042477    
+
+Training Data Evaluation:
+------------------------
+Method       MSE          MAE         
+------------------------------------
+AutoLoss     15.692278    1.954597    
+MSE Regression 22.485997    3.108338    
+MAE Regression 16.099935    1.962359    
+
+Validation Data Evaluation:
+--------------------------
+Method       MSE          MAE         
+------------------------------------
+AutoLoss     67.802168    2.080613    
+MSE Regression 70.361297    3.095785    
+MAE Regression 67.639141    2.011101    
+
+Test Data Evaluation:
+--------------------
+Method       MSE          MAE         
+------------------------------------
+AutoLoss     309.178400   3.009152    
+MSE Regression 318.262547   4.099938    
+MAE Regression 308.830238   2.949600    
+
+Training History:
+----------------
+Validation Loss Overview (flattened): 20 iterations
+1:68.433786  2:68.333107  3:67.694854  4:67.627890  5:68.060608
+6:68.056541  7:67.972946  8:67.968835  9:67.602841  10:67.649620
+11:67.475927  12:67.482709  13:67.901146  14:67.904668  15:67.567789
+16:67.553356  17:68.223847  18:68.195130  19:67.802168  20:67.796914
+
+Detailed Validation Loss by Global Iteration:
+
+Global Iteration 1:
+  Hyper step 1: 68.433786
+  Hyper step 2: 68.333107
+
+Global Iteration 2:
+  Hyper step 1: 67.694854
+  Hyper step 2: 67.627890
+
+Global Iteration 3:
+  Hyper step 1: 68.060608
+  Hyper step 2: 68.056541
+
+Global Iteration 4:
+  Hyper step 1: 67.972946
+  Hyper step 2: 67.968835
+
+Global Iteration 5:
+  Hyper step 1: 67.602841
+  Hyper step 2: 67.649620
+
+Global Iteration 6:
+  Hyper step 1: 67.475927
+  Hyper step 2: 67.482709
+
+Global Iteration 7:
+  Hyper step 1: 67.901146
+  Hyper step 2: 67.904668
+
+Global Iteration 8:
+  Hyper step 1: 67.567789
+  Hyper step 2: 67.553356
+
+Global Iteration 9:
+  Hyper step 1: 68.223847
+  Hyper step 2: 68.195130
+
+Global Iteration 10:
+  Hyper step 1: 67.802168
+  Hyper step 2: 67.796914

@@ -1,0 +1,172 @@
+AutoLoss Experiment Results
+================04091424================
+
+Configuration:
+- Distribution: laplace
+- Loss Type: mse
+- Optimizer: adam
+- Parameters: L=5, H=0
+- Samples: 1000 (train=N/A)
+- Features: 5
+- Updates: 1 global, 100 hyper
+
+Model Parameters:
+----------------
+- Final Beta: [6.3240433  0.03174249 3.992182   0.5075594  1.4363976 ]
+- U: [-0.48378173  1.2191902   0.629332   -0.93511146  0.59487826]
+- V: [-0.71901137 -1.8817803  -0.889984   -1.6469173  -0.42095956]
+- S: []
+- T: []
+- tau: []
+
+Beta Comparison Metrics:
+--------------------
+Method       Beta MSE     Beta MAE    
+------------------------------------
+AutoLoss     0.013894     0.100416    
+MSE Regression 0.009783     0.071486    
+MAE Regression 0.005520     0.061781    
+
+Training Data Evaluation:
+------------------------
+Method       MSE          MAE         
+------------------------------------
+AutoLoss     2.208280     1.086562    
+MSE Regression 2.194366     1.081256    
+MAE Regression 2.210424     1.075965    
+
+Validation Data Evaluation:
+--------------------------
+Method       MSE          MAE         
+------------------------------------
+AutoLoss     2.166978     1.058655    
+MSE Regression 2.139087     1.042463    
+MAE Regression 2.100229     1.023499    
+
+Training History:
+----------------
+Validation Loss Overview (flattened): 100 iterations
+1:2.232489  2:2.224972  3:2.228062  4:2.223504  5:2.223836
+6:2.232004  7:2.223132  8:2.222434  9:2.224595  10:2.223773
+11:2.225821  12:2.226190  13:2.228426  14:2.228176  15:2.228313
+16:2.235157  17:2.235252  18:2.227565  19:2.226975  20:2.225674
+21:2.226110  22:2.227100  23:2.227106  24:2.226367  25:2.227615
+26:2.228142  27:2.227846  28:2.228421  29:2.228873  30:2.228300
+31:2.226796  32:2.226850  33:2.226994  34:2.227469  35:2.227390
+36:2.226463  37:2.225877  38:2.225080  39:2.223966  40:2.223404
+41:2.231203  42:2.223843  43:2.224072  44:2.224273  45:2.223367
+46:2.222955  47:2.223100  48:2.227457  49:2.222193  50:2.223329
+51:2.223295  52:2.225096  53:2.226886  54:2.226596  55:2.228090
+56:2.226304  57:2.225508  58:2.225258  59:2.225880  60:2.228160
+61:2.224581  62:2.225121  63:2.225309  64:2.226439  65:2.226413
+66:2.228293  67:2.229269  68:2.228834  69:2.227484  70:2.227688
+71:2.227383  72:2.226100  73:2.227101  74:2.225996  75:2.227354
+76:2.228729  77:2.227913  78:2.229406  79:2.230933  80:2.231361
+81:2.230841  82:2.230601  83:2.230808  84:2.232374  85:2.229364
+86:2.231100  87:2.232167  88:2.232650  89:2.232088  90:2.230812
+91:2.229026  92:2.228439  93:2.230273  94:2.227437  95:2.228291
+96:2.227134  97:2.225221  98:2.227286  99:2.228184  100:2.226464
+
+Detailed Validation Loss by Global Iteration:
+
+Global Iteration 1:
+  Hyper step 1: 2.232489
+  Hyper step 2: 2.224972
+  Hyper step 3: 2.228062
+  Hyper step 4: 2.223504
+  Hyper step 5: 2.223836
+  Hyper step 6: 2.232004
+  Hyper step 7: 2.223132
+  Hyper step 8: 2.222434
+  Hyper step 9: 2.224595
+  Hyper step 10: 2.223773
+  Hyper step 11: 2.225821
+  Hyper step 12: 2.226190
+  Hyper step 13: 2.228426
+  Hyper step 14: 2.228176
+  Hyper step 15: 2.228313
+  Hyper step 16: 2.235157
+  Hyper step 17: 2.235252
+  Hyper step 18: 2.227565
+  Hyper step 19: 2.226975
+  Hyper step 20: 2.225674
+  Hyper step 21: 2.226110
+  Hyper step 22: 2.227100
+  Hyper step 23: 2.227106
+  Hyper step 24: 2.226367
+  Hyper step 25: 2.227615
+  Hyper step 26: 2.228142
+  Hyper step 27: 2.227846
+  Hyper step 28: 2.228421
+  Hyper step 29: 2.228873
+  Hyper step 30: 2.228300
+  Hyper step 31: 2.226796
+  Hyper step 32: 2.226850
+  Hyper step 33: 2.226994
+  Hyper step 34: 2.227469
+  Hyper step 35: 2.227390
+  Hyper step 36: 2.226463
+  Hyper step 37: 2.225877
+  Hyper step 38: 2.225080
+  Hyper step 39: 2.223966
+  Hyper step 40: 2.223404
+  Hyper step 41: 2.231203
+  Hyper step 42: 2.223843
+  Hyper step 43: 2.224072
+  Hyper step 44: 2.224273
+  Hyper step 45: 2.223367
+  Hyper step 46: 2.222955
+  Hyper step 47: 2.223100
+  Hyper step 48: 2.227457
+  Hyper step 49: 2.222193
+  Hyper step 50: 2.223329
+  Hyper step 51: 2.223295
+  Hyper step 52: 2.225096
+  Hyper step 53: 2.226886
+  Hyper step 54: 2.226596
+  Hyper step 55: 2.228090
+  Hyper step 56: 2.226304
+  Hyper step 57: 2.225508
+  Hyper step 58: 2.225258
+  Hyper step 59: 2.225880
+  Hyper step 60: 2.228160
+  Hyper step 61: 2.224581
+  Hyper step 62: 2.225121
+  Hyper step 63: 2.225309
+  Hyper step 64: 2.226439
+  Hyper step 65: 2.226413
+  Hyper step 66: 2.228293
+  Hyper step 67: 2.229269
+  Hyper step 68: 2.228834
+  Hyper step 69: 2.227484
+  Hyper step 70: 2.227688
+  Hyper step 71: 2.227383
+  Hyper step 72: 2.226100
+  Hyper step 73: 2.227101
+  Hyper step 74: 2.225996
+  Hyper step 75: 2.227354
+  Hyper step 76: 2.228729
+  Hyper step 77: 2.227913
+  Hyper step 78: 2.229406
+  Hyper step 79: 2.230933
+  Hyper step 80: 2.231361
+  Hyper step 81: 2.230841
+  Hyper step 82: 2.230601
+  Hyper step 83: 2.230808
+  Hyper step 84: 2.232374
+  Hyper step 85: 2.229364
+  Hyper step 86: 2.231100
+  Hyper step 87: 2.232167
+  Hyper step 88: 2.232650
+  Hyper step 89: 2.232088
+  Hyper step 90: 2.230812
+  Hyper step 91: 2.229026
+  Hyper step 92: 2.228439
+  Hyper step 93: 2.230273
+  Hyper step 94: 2.227437
+  Hyper step 95: 2.228291
+  Hyper step 96: 2.227134
+  Hyper step 97: 2.225221
+  Hyper step 98: 2.227286
+  Hyper step 99: 2.228184
+  Hyper step 100: 2.226464

@@ -1,0 +1,79 @@
+AutoLoss Experiment Results
+================04151350================
+
+Configuration:
+- Distribution: laplace
+- Loss Type: mse
+- Optimizer: adam
+- Parameters: L=10, H=0
+- Samples: 1000 (train=N/A)
+- Features: 20
+- Updates: 5 global, 1 hyper
+
+Model Parameters:
+----------------
+- Final Beta: [-6.22062214 -4.51358074 -4.86130206 -3.7020342  -4.33740912  1.5713734
+  4.83043478  2.31252735 -2.89483275  1.3931052   1.05958573  1.11570851
+ -0.36807081 -3.39905381 -5.22508654 -3.84589685  0.0619531   1.70009729
+  1.37181768  3.71725629]
+- U: [-0.53322625  1.2580554   0.628905   -0.93112236  0.5499643  -0.30814734
+  0.08811087 -0.7442585  -1.3584858  -0.07748307]
+- V: [-0.6609525  -1.8574927  -0.894477   -1.6217182  -0.46714002  0.96117574
+  0.63000053  0.04926553  0.56213     2.1943238 ]
+- S: []
+- T: []
+- tau: []
+
+Beta Comparison Metrics:
+--------------------
+Method       Beta MSE     Beta MAE    
+------------------------------------
+AutoLoss     11.639167    2.855614    
+MSE Regression 4.274626     1.635039    
+MAE Regression 2.912061     1.371881    
+
+Training Data Evaluation:
+------------------------
+Method       MSE          MAE         
+------------------------------------
+AutoLoss     4415.322196  47.350505   
+MSE Regression 4503.562717  49.087990   
+MAE Regression 4545.989371  49.053528   
+
+Validation Data Evaluation:
+--------------------------
+Method       MSE          MAE         
+------------------------------------
+AutoLoss     4557.393333  48.102896   
+MSE Regression 4465.639618  47.272588   
+MAE Regression 4514.555915  46.832704   
+
+Test Data Evaluation:
+--------------------
+Method       MSE          MAE         
+------------------------------------
+AutoLoss     4912.864480  51.102745   
+MSE Regression 4746.258806  49.960539   
+MAE Regression 4709.309251  49.825438   
+
+Training History:
+----------------
+Validation Loss Overview (flattened): 5 iterations
+1:4574.865575  2:4538.429147  3:4801.100620  4:5001.326940  5:4701.221754
+
+Detailed Validation Loss by Global Iteration:
+
+Global Iteration 1:
+  Hyper step 1: 4574.865575
+
+Global Iteration 2:
+  Hyper step 1: 4538.429147
+
+Global Iteration 3:
+  Hyper step 1: 4801.100620
+
+Global Iteration 4:
+  Hyper step 1: 5001.326940
+
+Global Iteration 5:
+  Hyper step 1: 4701.221754

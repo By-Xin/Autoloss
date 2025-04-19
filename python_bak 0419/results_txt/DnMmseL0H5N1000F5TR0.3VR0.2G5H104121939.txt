@@ -1,0 +1,75 @@
+AutoLoss Experiment Results
+================04121939================
+
+Configuration:
+- Distribution: normal
+- Loss Type: mse
+- Optimizer: adam
+- Parameters: L=0, H=5
+- Samples: 1000 (train=N/A)
+- Features: 5
+- Updates: 5 global, 1 hyper
+
+Model Parameters:
+----------------
+- Final Beta: [7.16148319e-01 7.61264357e-19 1.50856873e-18 1.11347268e-18
+ 1.06517939e+00]
+- U: []
+- V: []
+- S: [-0.5405324  1.2733349  0.6662989 -0.9278482  0.5871633]
+- T: [-0.67983556 -1.8215777  -0.83584225 -1.654558   -0.42039466]
+- tau: [1. 1. 1. 1. 1.]
+
+Beta Comparison Metrics:
+--------------------
+Method       Beta MSE     Beta MAE    
+------------------------------------
+AutoLoss     1.163507     0.892239    
+MSE Regression 0.266014     0.452320    
+MAE Regression 0.490749     0.581099    
+
+Training Data Evaluation:
+------------------------
+Method       MSE          MAE         
+------------------------------------
+AutoLoss     105.777183   8.320444    
+MSE Regression 94.754585    7.835062    
+MAE Regression 95.474910    7.798388    
+
+Validation Data Evaluation:
+--------------------------
+Method       MSE          MAE         
+------------------------------------
+AutoLoss     121.554019   8.749428    
+MSE Regression 109.084927   8.309816    
+MAE Regression 109.616521   8.325909    
+
+Test Data Evaluation:
+--------------------
+Method       MSE          MAE         
+------------------------------------
+AutoLoss     106.080908   8.236661    
+MSE Regression 99.973793    7.951629    
+MAE Regression 101.322874   7.994033    
+
+Training History:
+----------------
+Validation Loss Overview (flattened): 5 iterations
+1:87.287085  2:126.066269  3:109.302118  4:100.748913  5:121.554019
+
+Detailed Validation Loss by Global Iteration:
+
+Global Iteration 1:
+  Hyper step 1: 87.287085
+
+Global Iteration 2:
+  Hyper step 1: 126.066269
+
+Global Iteration 3:
+  Hyper step 1: 109.302118
+
+Global Iteration 4:
+  Hyper step 1: 100.748913
+
+Global Iteration 5:
+  Hyper step 1: 121.554019

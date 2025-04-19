@@ -1,0 +1,71 @@
+AutoLoss Experiment Results
+================04182007================
+
+Configuration:
+- Distribution: t
+- Loss Type: mse
+- Optimizer: adam
+- Parameters: L=2, H=2
+- Samples: 1000 (train=N/A)
+- Features: 20
+- Updates: 3 global, 1 hyper
+
+Model Parameters:
+----------------
+- Final Beta: [ 1.39016112 -2.04183638 -1.12014417 -0.5545037   0.80009411 -0.86895736
+ -0.90834401  0.40251283  1.12492011 -0.16028113  0.75859894 -0.23592405
+ -0.56734833 -1.84377767  0.18488502 -0.9129038   0.30706966 -1.65684675
+ -0.45426474  1.25039699]
+- U: [-0.77426046  1.4023964 ]
+- V: [-0.64320964 -1.6918075 ]
+- S: [-1.5376445  -0.09442218]
+- T: [ 1.2084326 -0.3029351]
+- tau: [1. 1.]
+
+Beta Comparison Metrics:
+--------------------
+Method       Beta MSE     Beta MAE    
+------------------------------------
+AutoLoss     0.025223     0.118829    
+MSE Regression 0.383299     0.499911    
+MAE Regression 0.002617     0.042477    
+
+Training Data Evaluation:
+------------------------
+Method       MSE          MAE         
+------------------------------------
+AutoLoss     442.223747   3.497931    
+MSE Regression 428.056278   4.551221    
+MAE Regression 445.390553   3.466447    
+
+Validation Data Evaluation:
+--------------------------
+Method       MSE          MAE         
+------------------------------------
+AutoLoss     68.227250    2.163745    
+MSE Regression 70.361297    3.095785    
+MAE Regression 67.639141    2.011101    
+
+Test Data Evaluation:
+--------------------
+Method       MSE          MAE         
+------------------------------------
+AutoLoss     308.068861   3.036997    
+MSE Regression 318.262547   4.099938    
+MAE Regression 308.830238   2.949600    
+
+Training History:
+----------------
+Validation Loss Overview (flattened): 3 iterations
+1:68.433786  2:67.683583  3:68.191473
+
+Detailed Validation Loss by Global Iteration:
+
+Global Iteration 1:
+  Hyper step 1: 68.433786
+
+Global Iteration 2:
+  Hyper step 1: 67.683583
+
+Global Iteration 3:
+  Hyper step 1: 68.191473
