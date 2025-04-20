@@ -1,0 +1,501 @@
+AutoLoss Experiment Results
+================04200231================
+
+Configuration:
+- Distribution: t
+- Loss Type: mse
+- Optimizer: adam
+- Parameters: L=5, H=2
+- Samples: 1000 (train=N/A)
+- Features: 20
+- Updates: 100 global, 2 hyper
+
+Model Parameters:
+----------------
+- Final Beta: [ 1.51621082 -1.80931195 -0.91837329 -0.39151197  0.40494148 -1.41751452
+ -1.401357    1.17534751  1.21677187  0.32016554  1.36575956 -0.74015782
+ -1.21976321 -1.38441661 -0.16217735 -1.01270322  0.51169009 -1.93287282
+ -0.51835066  1.51091727]
+- U: [-4.113515   -0.33134556 -4.6090164  -3.573218   -2.664826  ]
+- V: [ 6.2327247 10.277026   6.807379   6.794285   7.8534145]
+- S: [-3.484376 -3.484376]
+- T: [14.7208 14.7208]
+- tau: [1. 1.]
+
+Beta Comparison Metrics:
+--------------------
+Method       Beta MSE     Beta MAE    
+------------------------------------
+AutoLoss     0.206503     0.404088    
+MSE Regression 0.383299     0.499911    
+MAE Regression 0.002617     0.042477    
+
+Training Data Evaluation:
+------------------------
+Method       MSE          MAE         
+------------------------------------
+AutoLoss     758.689496   4.726131    
+MSE Regression 719.120716   5.052384    
+MAE Regression 748.584439   4.039839    
+
+Validation Data Evaluation:
+--------------------------
+Method       MSE          MAE         
+------------------------------------
+AutoLoss     73.517555    2.816004    
+MSE Regression 70.361297    3.095785    
+MAE Regression 67.639141    2.011101    
+
+Test Data Evaluation:
+--------------------
+Method       MSE          MAE         
+------------------------------------
+AutoLoss     310.942464   3.680807    
+MSE Regression 318.262547   4.099938    
+MAE Regression 308.830238   2.949600    
+
+Training History:
+----------------
+Validation Loss Overview (flattened): 200 iterations
+1:162.373727  2:147.795473  3:143.361701  4:139.208728  5:136.036581
+6:132.162375  7:127.451406  8:123.670848  9:119.998501  10:116.216951
+11:113.414109  12:111.035916  13:108.219918  14:105.928364  15:104.341032
+16:103.009693  17:101.272372  18:99.681873  19:98.255569  20:96.868033
+21:95.611319  22:94.376534  23:93.487882  24:92.259677  25:91.563720
+26:91.014378  27:90.527386  28:89.650080  29:88.916597  30:88.542192
+31:88.035918  32:87.352161  33:87.017795  34:86.475764  35:85.980525
+36:85.592139  37:85.065323  38:84.668802  39:84.356894  40:83.917748
+41:83.587274  42:83.065281  43:82.798465  44:82.537885  45:82.229131
+46:81.898622  47:81.558080  48:81.325891  49:81.090942  50:80.959569
+51:80.840509  52:80.585195  53:80.425144  54:80.255556  55:80.058689
+56:79.903937  57:79.735643  58:79.547454  59:79.434386  60:79.341894
+61:79.236100  62:79.121515  63:79.006231  64:78.897075  65:78.775576
+66:78.657731  67:78.522001  68:78.425770  69:78.337410  70:78.261648
+71:78.191368  72:78.080680  73:77.971396  74:77.875035  75:77.760369
+76:77.672890  77:77.574986  78:77.471267  79:77.402452  80:77.308730
+81:77.229041  82:77.121926  83:77.066255  84:77.027056  85:76.985365
+86:76.949726  87:76.907959  88:76.867340  89:76.828198  90:76.792102
+91:76.755977  92:76.717233  93:76.670889  94:76.646463  95:76.617594
+96:76.591865  97:76.540852  98:76.497719  99:76.462485  100:76.433747
+101:76.404050  102:76.378990  103:76.346714  104:76.306344  105:76.282283
+106:76.261117  107:76.238999  108:76.209786  109:76.179622  110:76.147487
+111:76.103593  112:76.038799  113:75.970603  114:75.931440  115:75.907848
+116:75.891401  117:75.859502  118:75.788583  119:75.727880  120:75.645734
+121:75.575902  122:75.519388  123:75.457345  124:75.393828  125:75.335354
+126:75.310003  127:75.257525  128:75.237404  129:75.227732  130:75.202553
+131:75.175179  132:75.172580  133:75.178408  134:75.164034  135:75.147465
+136:75.119182  137:75.105497  138:75.082629  139:75.070212  140:75.058191
+141:75.036469  142:75.011244  143:74.976218  144:74.882427  145:74.824307
+146:74.794127  147:74.773725  148:74.750605  149:74.726106  150:74.704973
+151:74.677074  152:74.644444  153:74.614504  154:74.584287  155:74.556131
+156:74.526825  157:74.497600  158:74.472693  159:74.457481  160:74.439286
+161:74.421085  162:74.388771  163:74.358893  164:74.350626  165:74.325933
+166:74.301198  167:74.285664  168:74.273571  169:74.246090  170:74.233581
+171:74.211898  172:74.183109  173:74.172039  174:74.146179  175:74.122619
+176:74.105542  177:74.104076  178:74.111312  179:74.106140  180:74.089332
+181:74.074152  182:74.057094  183:74.032665  184:74.034053  185:74.025319
+186:74.005435  187:73.979788  188:73.953627  189:73.925054  190:73.891935
+191:73.848150  192:73.810285  193:73.780150  194:73.751489  195:73.721324
+196:73.676476  197:73.617770  198:73.552203  199:73.517555  200:73.483669
+
+Detailed Validation Loss by Global Iteration:
+
+Global Iteration 1:
+  Hyper step 1: 162.373727
+  Hyper step 2: 147.795473
+
+Global Iteration 2:
+  Hyper step 1: 143.361701
+  Hyper step 2: 139.208728
+
+Global Iteration 3:
+  Hyper step 1: 136.036581
+  Hyper step 2: 132.162375
+
+Global Iteration 4:
+  Hyper step 1: 127.451406
+  Hyper step 2: 123.670848
+
+Global Iteration 5:
+  Hyper step 1: 119.998501
+  Hyper step 2: 116.216951
+
+Global Iteration 6:
+  Hyper step 1: 113.414109
+  Hyper step 2: 111.035916
+
+Global Iteration 7:
+  Hyper step 1: 108.219918
+  Hyper step 2: 105.928364
+
+Global Iteration 8:
+  Hyper step 1: 104.341032
+  Hyper step 2: 103.009693
+
+Global Iteration 9:
+  Hyper step 1: 101.272372
+  Hyper step 2: 99.681873
+
+Global Iteration 10:
+  Hyper step 1: 98.255569
+  Hyper step 2: 96.868033
+
+Global Iteration 11:
+  Hyper step 1: 95.611319
+  Hyper step 2: 94.376534
+
+Global Iteration 12:
+  Hyper step 1: 93.487882
+  Hyper step 2: 92.259677
+
+Global Iteration 13:
+  Hyper step 1: 91.563720
+  Hyper step 2: 91.014378
+
+Global Iteration 14:
+  Hyper step 1: 90.527386
+  Hyper step 2: 89.650080
+
+Global Iteration 15:
+  Hyper step 1: 88.916597
+  Hyper step 2: 88.542192
+
+Global Iteration 16:
+  Hyper step 1: 88.035918
+  Hyper step 2: 87.352161
+
+Global Iteration 17:
+  Hyper step 1: 87.017795
+  Hyper step 2: 86.475764
+
+Global Iteration 18:
+  Hyper step 1: 85.980525
+  Hyper step 2: 85.592139
+
+Global Iteration 19:
+  Hyper step 1: 85.065323
+  Hyper step 2: 84.668802
+
+Global Iteration 20:
+  Hyper step 1: 84.356894
+  Hyper step 2: 83.917748
+
+Global Iteration 21:
+  Hyper step 1: 83.587274
+  Hyper step 2: 83.065281
+
+Global Iteration 22:
+  Hyper step 1: 82.798465
+  Hyper step 2: 82.537885
+
+Global Iteration 23:
+  Hyper step 1: 82.229131
+  Hyper step 2: 81.898622
+
+Global Iteration 24:
+  Hyper step 1: 81.558080
+  Hyper step 2: 81.325891
+
+Global Iteration 25:
+  Hyper step 1: 81.090942
+  Hyper step 2: 80.959569
+
+Global Iteration 26:
+  Hyper step 1: 80.840509
+  Hyper step 2: 80.585195
+
+Global Iteration 27:
+  Hyper step 1: 80.425144
+  Hyper step 2: 80.255556
+
+Global Iteration 28:
+  Hyper step 1: 80.058689
+  Hyper step 2: 79.903937
+
+Global Iteration 29:
+  Hyper step 1: 79.735643
+  Hyper step 2: 79.547454
+
+Global Iteration 30:
+  Hyper step 1: 79.434386
+  Hyper step 2: 79.341894
+
+Global Iteration 31:
+  Hyper step 1: 79.236100
+  Hyper step 2: 79.121515
+
+Global Iteration 32:
+  Hyper step 1: 79.006231
+  Hyper step 2: 78.897075
+
+Global Iteration 33:
+  Hyper step 1: 78.775576
+  Hyper step 2: 78.657731
+
+Global Iteration 34:
+  Hyper step 1: 78.522001
+  Hyper step 2: 78.425770
+
+Global Iteration 35:
+  Hyper step 1: 78.337410
+  Hyper step 2: 78.261648
+
+Global Iteration 36:
+  Hyper step 1: 78.191368
+  Hyper step 2: 78.080680
+
+Global Iteration 37:
+  Hyper step 1: 77.971396
+  Hyper step 2: 77.875035
+
+Global Iteration 38:
+  Hyper step 1: 77.760369
+  Hyper step 2: 77.672890
+
+Global Iteration 39:
+  Hyper step 1: 77.574986
+  Hyper step 2: 77.471267
+
+Global Iteration 40:
+  Hyper step 1: 77.402452
+  Hyper step 2: 77.308730
+
+Global Iteration 41:
+  Hyper step 1: 77.229041
+  Hyper step 2: 77.121926
+
+Global Iteration 42:
+  Hyper step 1: 77.066255
+  Hyper step 2: 77.027056
+
+Global Iteration 43:
+  Hyper step 1: 76.985365
+  Hyper step 2: 76.949726
+
+Global Iteration 44:
+  Hyper step 1: 76.907959
+  Hyper step 2: 76.867340
+
+Global Iteration 45:
+  Hyper step 1: 76.828198
+  Hyper step 2: 76.792102
+
+Global Iteration 46:
+  Hyper step 1: 76.755977
+  Hyper step 2: 76.717233
+
+Global Iteration 47:
+  Hyper step 1: 76.670889
+  Hyper step 2: 76.646463
+
+Global Iteration 48:
+  Hyper step 1: 76.617594
+  Hyper step 2: 76.591865
+
+Global Iteration 49:
+  Hyper step 1: 76.540852
+  Hyper step 2: 76.497719
+
+Global Iteration 50:
+  Hyper step 1: 76.462485
+  Hyper step 2: 76.433747
+
+Global Iteration 51:
+  Hyper step 1: 76.404050
+  Hyper step 2: 76.378990
+
+Global Iteration 52:
+  Hyper step 1: 76.346714
+  Hyper step 2: 76.306344
+
+Global Iteration 53:
+  Hyper step 1: 76.282283
+  Hyper step 2: 76.261117
+
+Global Iteration 54:
+  Hyper step 1: 76.238999
+  Hyper step 2: 76.209786
+
+Global Iteration 55:
+  Hyper step 1: 76.179622
+  Hyper step 2: 76.147487
+
+Global Iteration 56:
+  Hyper step 1: 76.103593
+  Hyper step 2: 76.038799
+
+Global Iteration 57:
+  Hyper step 1: 75.970603
+  Hyper step 2: 75.931440
+
+Global Iteration 58:
+  Hyper step 1: 75.907848
+  Hyper step 2: 75.891401
+
+Global Iteration 59:
+  Hyper step 1: 75.859502
+  Hyper step 2: 75.788583
+
+Global Iteration 60:
+  Hyper step 1: 75.727880
+  Hyper step 2: 75.645734
+
+Global Iteration 61:
+  Hyper step 1: 75.575902
+  Hyper step 2: 75.519388
+
+Global Iteration 62:
+  Hyper step 1: 75.457345
+  Hyper step 2: 75.393828
+
+Global Iteration 63:
+  Hyper step 1: 75.335354
+  Hyper step 2: 75.310003
+
+Global Iteration 64:
+  Hyper step 1: 75.257525
+  Hyper step 2: 75.237404
+
+Global Iteration 65:
+  Hyper step 1: 75.227732
+  Hyper step 2: 75.202553
+
+Global Iteration 66:
+  Hyper step 1: 75.175179
+  Hyper step 2: 75.172580
+
+Global Iteration 67:
+  Hyper step 1: 75.178408
+  Hyper step 2: 75.164034
+
+Global Iteration 68:
+  Hyper step 1: 75.147465
+  Hyper step 2: 75.119182
+
+Global Iteration 69:
+  Hyper step 1: 75.105497
+  Hyper step 2: 75.082629
+
+Global Iteration 70:
+  Hyper step 1: 75.070212
+  Hyper step 2: 75.058191
+
+Global Iteration 71:
+  Hyper step 1: 75.036469
+  Hyper step 2: 75.011244
+
+Global Iteration 72:
+  Hyper step 1: 74.976218
+  Hyper step 2: 74.882427
+
+Global Iteration 73:
+  Hyper step 1: 74.824307
+  Hyper step 2: 74.794127
+
+Global Iteration 74:
+  Hyper step 1: 74.773725
+  Hyper step 2: 74.750605
+
+Global Iteration 75:
+  Hyper step 1: 74.726106
+  Hyper step 2: 74.704973
+
+Global Iteration 76:
+  Hyper step 1: 74.677074
+  Hyper step 2: 74.644444
+
+Global Iteration 77:
+  Hyper step 1: 74.614504
+  Hyper step 2: 74.584287
+
+Global Iteration 78:
+  Hyper step 1: 74.556131
+  Hyper step 2: 74.526825
+
+Global Iteration 79:
+  Hyper step 1: 74.497600
+  Hyper step 2: 74.472693
+
+Global Iteration 80:
+  Hyper step 1: 74.457481
+  Hyper step 2: 74.439286
+
+Global Iteration 81:
+  Hyper step 1: 74.421085
+  Hyper step 2: 74.388771
+
+Global Iteration 82:
+  Hyper step 1: 74.358893
+  Hyper step 2: 74.350626
+
+Global Iteration 83:
+  Hyper step 1: 74.325933
+  Hyper step 2: 74.301198
+
+Global Iteration 84:
+  Hyper step 1: 74.285664
+  Hyper step 2: 74.273571
+
+Global Iteration 85:
+  Hyper step 1: 74.246090
+  Hyper step 2: 74.233581
+
+Global Iteration 86:
+  Hyper step 1: 74.211898
+  Hyper step 2: 74.183109
+
+Global Iteration 87:
+  Hyper step 1: 74.172039
+  Hyper step 2: 74.146179
+
+Global Iteration 88:
+  Hyper step 1: 74.122619
+  Hyper step 2: 74.105542
+
+Global Iteration 89:
+  Hyper step 1: 74.104076
+  Hyper step 2: 74.111312
+
+Global Iteration 90:
+  Hyper step 1: 74.106140
+  Hyper step 2: 74.089332
+
+Global Iteration 91:
+  Hyper step 1: 74.074152
+  Hyper step 2: 74.057094
+
+Global Iteration 92:
+  Hyper step 1: 74.032665
+  Hyper step 2: 74.034053
+
+Global Iteration 93:
+  Hyper step 1: 74.025319
+  Hyper step 2: 74.005435
+
+Global Iteration 94:
+  Hyper step 1: 73.979788
+  Hyper step 2: 73.953627
+
+Global Iteration 95:
+  Hyper step 1: 73.925054
+  Hyper step 2: 73.891935
+
+Global Iteration 96:
+  Hyper step 1: 73.848150
+  Hyper step 2: 73.810285
+
+Global Iteration 97:
+  Hyper step 1: 73.780150
+  Hyper step 2: 73.751489
+
+Global Iteration 98:
+  Hyper step 1: 73.721324
+  Hyper step 2: 73.676476
+
+Global Iteration 99:
+  Hyper step 1: 73.617770
+  Hyper step 2: 73.552203
+
+Global Iteration 100:
+  Hyper step 1: 73.517555
+  Hyper step 2: 73.483669
